@@ -1,0 +1,1937 @@
+<!doctype html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Osilasi Lab — Modul 11 Fisika Dasar</title>
+<meta name="description" content="Belajar osilasi harmonik, pendulum, dan osilasi teredam lewat materi, simulasi, kuis, dan soal ujian dengan tutor AI.">
+<meta name="theme-color" content="#f6f5f1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%2317181c%27/%3E%3Cpath d=%27M5 16c3-8 6-8 9 0s6 8 9 0 3-5 4-3%27 fill=%27none%27 stroke=%27%23fff%27 stroke-width=%272.4%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Noto+Sans+Math&display=swap">
+<script>
+/* Pasang tema sedini mungkin agar tidak berkedip */
+(function(){var t=null;try{t=localStorage.getItem('osilasi-theme')}catch(e){}
+if(!t){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}
+document.documentElement.setAttribute('data-theme',t)})();
+</script>
+<style>
+/* ==========================================================================
+   SISTEM DESAIN
+   Tipe   : Newsreader (judul, 600, tracking negatif) / Instrument Sans (teks 16px, 1.6)
+            / JetBrains Mono (angka & readout). Skala: 12 · 14 · 16 · 18 · 22 · 28 · 40 · 56
+   Warna  : 2 latar (bg, surface) + garis rambut; 1 aksen indigo dipakai hemat
+            (fokus, CTA, status aktif). Warna data: x biru, v jingga, a magenta,
+            U kuning tua, K hijau toska.
+   Ritme  : spasi 4/8/12/16/24/32/48/72. Radius 8/12/16. Kartu = garis rambut, tanpa bayangan berat.
+   Kepala bagian: eyebrow mono kecil + judul serif + satu kalimat penjelas.
+   ========================================================================== */
+:root{
+  --f-display:"Newsreader", Georgia, "Times New Roman", serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-pill:999px;
+  --topbar-h:60px; --drawer-w:440px;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+html[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f6f5f1; --surface:#ffffff; --surface-2:#f0efe9; --surface-3:#e9e7df;
+  --line:#e3e0d7; --line-strong:#cdc9bd;
+  --ink:#17181c; --ink-2:#464951; --ink-3:#62656d;
+  --accent:#4650c4; --accent-hover:#3a43ad; --accent-ink:#ffffff; --accent-soft:#e9eafb; --accent-line:#c6c9f3;
+  --c-x:#2363d1; --c-v:#c4561f; --c-a:#a62d91; --c-U:#a8710a; --c-K:#0f7d66; --c-E:#17181c;
+  --c-u1:#2363d1; --c-u2:#c4561f; --c-u3:#0f7d66;
+  --ok:#1b7a4a; --ok-soft:#e3f3ea; --bad:#b93434; --bad-soft:#f8e6e4; --warn:#94600a; --warn-soft:#f8efd9;
+  --shadow:0 1px 2px rgba(20,20,30,.05), 0 8px 24px rgba(20,20,30,.06);
+  --shadow-lg:0 2px 6px rgba(20,20,30,.06), 0 24px 60px rgba(20,20,30,.14);
+  --grid:rgba(23,24,28,.06);
+}
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0c0d10; --surface:#141519; --surface-2:#1a1b20; --surface-3:#22232a;
+  --line:#26282e; --line-strong:#383a42;
+  --ink:#ecedf0; --ink-2:#b9bcc4; --ink-3:#9296a0;
+  --accent:#8f97ff; --accent-hover:#a9afff; --accent-ink:#0c0d10; --accent-soft:#1d1f3a; --accent-line:#3a3f7a;
+  --c-x:#6da3ff; --c-v:#ff9b5e; --c-a:#e57ad3; --c-U:#f0b53e; --c-K:#3fcaa8; --c-E:#ecedf0;
+  --c-u1:#6da3ff; --c-u2:#ff9b5e; --c-u3:#3fcaa8;
+  --ok:#4fcf8a; --ok-soft:#12291d; --bad:#ff7b72; --bad-soft:#331816; --warn:#f0b53e; --warn-soft:#2e2410;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+  --shadow-lg:0 2px 6px rgba(0,0,0,.5), 0 24px 60px rgba(0,0,0,.55);
+  --grid:rgba(236,237,240,.06);
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+[tabindex="-1"]:focus{outline:none}
+html{scroll-padding-top:calc(var(--topbar-h) + 56px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh;overflow-x:hidden}
+img,svg,canvas{display:block;max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent);text-underline-offset:3px}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:600;line-height:1.15;letter-spacing:-.015em;margin:0;text-wrap:balance}
+p{margin:0 0 12px;text-wrap:pretty}
+math{font-family:"STIX Two Math","Cambria Math","Latin Modern Math","Noto Sans Math",math;font-size:1.08em}
+math[display="block"]{margin:2px 0;overflow-x:auto;overflow-y:hidden;max-width:100%;padding:4px 0}
+code,kbd,.mono{font-family:var(--f-mono);font-size:.88em}
+code.tex{background:var(--surface-2);border:1px solid var(--line);padding:1px 5px;border-radius:5px;white-space:pre-wrap;word-break:break-word}
+::selection{background:var(--accent-soft)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--accent);color:var(--accent-ink);padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:600}
+.skip:focus{top:10px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.icon{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.icon.sm{width:15px;height:15px}
+
+/* ---------- Topbar ---------- */
+.topbar{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 86%,transparent);
+  backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--line)}
+.topbar-in{display:flex;align-items:center;gap:16px;height:var(--topbar-h)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);flex:none}
+.brand-mark{width:30px;height:30px;border-radius:8px;background:var(--ink);color:var(--bg);display:grid;place-items:center}
+.brand-name{font-family:var(--f-display);font-weight:600;font-size:19px;letter-spacing:-.02em;line-height:1}
+.brand-sub{display:block;font-family:var(--f-mono);font-size:11px;color:var(--ink-3);letter-spacing:.02em;margin-top:3px}
+.nav{display:flex;gap:2px;margin:0 auto;padding:3px;border-radius:var(--r-pill);background:var(--surface-2);border:1px solid var(--line)}
+.nav a{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:var(--r-pill);font-size:14px;font-weight:500;color:var(--ink-2);text-decoration:none;white-space:nowrap;transition:background .15s,color .15s}
+.nav a:hover{color:var(--ink);background:var(--surface)}
+.nav a[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line),0 1px 2px rgba(0,0,0,.06)}
+.nav a .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);display:none}
+.nav a[aria-current="page"] .dot{display:inline-block}
+.top-actions{display:flex;align-items:center;gap:8px;flex:none}
+.progress-pill{display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border-radius:var(--r-pill);border:1px solid var(--line);background:var(--surface);font-size:13px;color:var(--ink-2);text-decoration:none;min-height:36px}
+.progress-pill svg{width:28px;height:28px}
+.progress-pill b{font-family:var(--f-mono);font-weight:500;color:var(--ink)}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:8px 16px;border-radius:10px;border:1px solid var(--line-strong);
+  background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap;
+  transition:background .15s var(--ease),border-color .15s,color .15s,transform .1s}
+.btn:hover{background:var(--surface-2);border-color:var(--ink-3)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn.ink{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.btn.ink:hover{opacity:.9}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--ink-2)}
+.btn.ghost:hover{background:var(--surface-2);color:var(--ink)}
+.btn.sm{min-height:34px;padding:5px 11px;font-size:13px;border-radius:8px}
+.btn.icon-only{width:40px;padding:0}
+.btn.sm.icon-only{width:34px}
+.btn.is-on{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent)}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+/* ---------- Generic ---------- */
+main{display:block;transition:margin-right .25s var(--ease)}
+.view{display:none;padding:32px 0 120px}
+.view.is-active{display:block;animation:viewIn .35s var(--ease)}
+@keyframes viewIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:"";width:14px;height:1px;background:currentColor}
+.section-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 32px;margin-bottom:28px}
+.section-head h1{font-size:clamp(30px,4vw,44px)}
+.section-head .lede{color:var(--ink-2);max-width:60ch;margin:10px 0 0;font-size:17px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}
+.pad{padding:24px}
+.muted{color:var(--ink-3)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:11.5px;padding:3px 8px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2);white-space:nowrap}
+.tag.accent{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:6px 12px;border-radius:var(--r-pill);border:1px solid var(--line-strong);background:var(--surface);color:var(--ink-2);font-size:13.5px;font-weight:500;cursor:pointer;text-align:left;line-height:1.35;transition:background .15s,border-color .15s,color .15s}
+.chip:hover{border-color:var(--ink-3);color:var(--ink)}
+.chip[aria-pressed="true"],.chip.is-on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.callout{border:1px solid var(--line);background:var(--surface-2);border-radius:var(--r-md);padding:14px 16px;font-size:15px;color:var(--ink-2)}
+.callout strong{color:var(--ink)}
+.callout.note{background:var(--accent-soft);border-color:var(--accent-line)}
+.kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:5px;padding:0 5px;color:var(--ink-2)}
+.seg{display:inline-flex;padding:3px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;padding:8px 14px;border-radius:9px;font-size:14px;font-weight:600;color:var(--ink-2);cursor:pointer;display:inline-flex;gap:8px;align-items:center;min-height:38px}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line),0 1px 2px rgba(0,0,0,.06)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field>span,.field>label{font-size:13px;font-weight:600;color:var(--ink-2)}
+.input,select.input,textarea.input{width:100%;min-height:40px;padding:8px 12px;border-radius:10px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font-size:15px}
+textarea.input{resize:vertical;line-height:1.5}
+.input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+
+/* ---------- Beranda ---------- */
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center;padding:24px 0 40px}
+.hero h1{font-size:clamp(38px,5.4vw,62px);letter-spacing:-.03em;line-height:1.02}
+.hero h1 em{font-style:italic;font-weight:500;color:var(--accent)}
+.hero .lede{font-size:18px;color:var(--ink-2);margin:20px 0 28px;max-width:52ch}
+.hero-figure{position:relative;padding:18px}
+.hero-figure canvas{width:100%;height:300px;border-radius:var(--r-md)}
+.hero-caption{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 4px 0;font-size:13px;color:var(--ink-3)}
+.hero-caption .mono{color:var(--ink-2)}
+.stats{display:flex;gap:32px;flex-wrap:wrap;margin-top:32px;padding-top:24px;border-top:1px solid var(--line)}
+.stats div{font-size:13px;color:var(--ink-3)}
+.stats b{display:block;font-family:var(--f-display);font-size:28px;font-weight:600;color:var(--ink);letter-spacing:-.02em;line-height:1.1}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.tile{display:flex;flex-direction:column;gap:10px;padding:22px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .2s var(--ease),box-shadow .2s}
+.tile:hover{border-color:var(--line-strong);transform:translateY(-2px);box-shadow:var(--shadow)}
+.tile-ico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
+.tile h3{font-size:22px}
+.tile p{color:var(--ink-2);font-size:15px;margin:0}
+.tile .go{margin-top:auto;font-size:13px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:6px}
+.progress-panel{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;padding:20px 24px;margin-top:40px}
+.bar{height:8px;border-radius:99px;background:var(--surface-3);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .5s var(--ease)}
+.progress-list{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:13px;color:var(--ink-3)}
+.progress-list span{display:inline-flex;align-items:center;gap:5px}
+.progress-list span.done{color:var(--ok)}
+.h2-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin:56px 0 4px}
+.h2-row h2{font-size:28px}
+
+/* ---------- Materi ---------- */
+.materi-grid{display:grid;grid-template-columns:240px minmax(0,1fr);gap:48px;align-items:start}
+.toc{position:sticky;top:calc(var(--topbar-h) + 24px);display:flex;flex-direction:column;gap:2px}
+.toc-title{font-family:var(--f-mono);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);margin:0 0 8px 10px}
+.toc a{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:9px;text-decoration:none;color:var(--ink-2);font-size:14.5px;line-height:1.3}
+.toc a:hover{background:var(--surface-2);color:var(--ink)}
+.toc a.is-current{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.toc .n{font-family:var(--f-mono);font-size:12px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line-strong);flex:none;color:var(--ink-3)}
+.toc a.is-done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+.chapter{padding:8px 0 48px;margin-bottom:48px;border-bottom:1px solid var(--line)}
+.chapter:last-child{border-bottom:0}
+.chapter-head{display:flex;gap:16px;align-items:baseline;margin-bottom:16px}
+.chapter-num{font-family:var(--f-mono);font-size:13px;color:var(--ink-3)}
+.chapter h2{font-size:clamp(26px,3vw,34px)}
+.prose{max-width:70ch;color:var(--ink-2);font-size:16.5px}
+.prose strong{color:var(--ink);font-weight:600}
+.eq{margin:18px 0;padding:14px 18px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:70ch}
+.eq .mb{flex:1;min-width:0;font-size:1.12em;overflow-x:auto;overflow-y:hidden}
+.eq-label{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3);white-space:nowrap}
+.eq-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:70ch;margin:18px 0}
+.eq-grid .eq{margin:0}
+dl.terms{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:16px 0;max-width:70ch;font-size:15.5px}
+dl.terms dt{font-weight:600;color:var(--ink)}
+dl.terms dd{margin:0;color:var(--ink-2)}
+.figure{margin:24px 0;padding:20px;max-width:760px}
+.figure figcaption{font-size:14px;color:var(--ink-3);margin-top:12px}
+.figure svg{width:100%;height:auto}
+.fig-controls{display:flex;flex-wrap:wrap;gap:12px 28px;margin-top:14px;align-items:center}
+.mini-range{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-2);white-space:nowrap;flex:1 1 240px;max-width:360px}
+.mini-range input{flex:1;min-width:90px}
+.mini-range output{font-family:var(--f-mono);font-size:13px;min-width:74px;color:var(--ink)}
+.compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;max-width:760px;margin:20px 0;overflow:hidden}
+.compare>div{padding:16px 20px}
+.compare>div+div{border-left:1px solid var(--line)}
+.compare h4{font-family:var(--f-body);font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600;margin-bottom:8px}
+.compare .row{padding:8px 0;border-top:1px dashed var(--line);font-size:14px;color:var(--ink-3)}
+.compare .row .mb{color:var(--ink);font-size:16px}
+.chapter-foot{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px;align-items:center}
+.chapter-foot .spacer{flex:1}
+.calc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) 1.4fr;gap:12px;align-items:end;max-width:760px;padding:18px 20px;margin:20px 0}
+.calc-out{font-family:var(--f-mono);font-size:13.5px;color:var(--ink-2);display:flex;flex-direction:column;gap:2px}
+.calc-out b{color:var(--ink);font-weight:500}
+
+/* ---------- Simulasi ---------- */
+.sim-top{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;margin-bottom:16px}
+.sim-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+.stage{overflow:hidden}
+.stage-canvas{width:100%;height:260px;display:block;background:var(--surface)}
+.stage-canvas.tall{height:340px}
+.graph-canvas{width:100%;height:240px;display:block;border-top:1px solid var(--line)}
+.transport{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 14px;border-top:1px solid var(--line);background:var(--surface-2)}
+.transport .spacer{flex:1}
+.transport .time{font-family:var(--f-mono);font-size:13px;color:var(--ink-2);min-width:88px}
+.speed{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2)}
+.speed select{min-height:34px;padding:4px 8px;border-radius:8px;border:1px solid var(--line-strong);background:var(--surface)}
+.panel{padding:18px;display:flex;flex-direction:column;gap:16px}
+.panel h3{font-family:var(--f-body);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3)}
+.slider{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center}
+.slider label{font-size:14px;font-weight:500;color:var(--ink)}
+.slider label .m{color:var(--ink)}
+.slider .num{display:flex;align-items:center;gap:4px;font-family:var(--f-mono);font-size:13px;color:var(--ink-3)}
+.slider .num input{width:84px;min-height:32px;padding:3px 6px;border-radius:7px;border:1px solid var(--line-strong);background:var(--surface);text-align:right;font-family:var(--f-mono);font-size:13px}
+.slider .num input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.slider input[type=range]{grid-column:1/-1}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:linear-gradient(to right,var(--accent) var(--p,50%),var(--surface-3) var(--p,50%))}
+input[type=range]::-moz-range-track{height:4px;border-radius:4px;background:var(--surface-3)}
+input[type=range]::-moz-range-progress{height:4px;border-radius:4px;background:var(--accent)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--surface);border:2px solid var(--accent);margin-top:-7px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}
+input[type=range]:focus-visible{outline:none}
+input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px var(--accent-soft)}
+.readouts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.readouts div{background:var(--surface);padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.readouts span{font-size:12px;color:var(--ink-3)}
+.readouts b{font-family:var(--f-mono);font-weight:500;font-size:14.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.energy{display:flex;flex-direction:column;gap:8px}
+.ebar{display:grid;grid-template-columns:22px 1fr 86px;gap:10px;align-items:center;font-size:13px}
+.ebar .lbl{font-family:var(--f-mono);font-weight:500}
+.ebar .track{height:12px;border-radius:4px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.ebar .track i{display:block;height:100%;width:0}
+.ebar .val{font-family:var(--f-mono);font-size:12.5px;text-align:right;color:var(--ink-2)}
+.toggle{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-2);cursor:pointer;min-height:32px}
+.toggle input{width:18px;height:18px;accent-color:var(--accent)}
+.regime{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink-2);padding:10px 14px;border-top:1px solid var(--line)}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.legend i.dash{background:repeating-linear-gradient(90deg,currentColor 0 4px,transparent 4px 7px)!important;height:2px}
+.preset-row{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ---------- Rumus ---------- */
+.rumus-tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:20px}
+.search{position:relative;flex:1 1 280px;max-width:420px}
+.search .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-3)}
+.search input{padding-left:38px}
+.f-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.f-card{padding:18px 18px 14px;display:flex;flex-direction:column;gap:10px;position:relative;transition:border-color .2s,box-shadow .2s,background .2s}
+.f-card .f-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.f-card h3{font-family:var(--f-body);font-size:15px;font-weight:600;letter-spacing:0;line-height:1.35}
+.f-card .f-math{min-height:52px;display:flex;align-items:center;font-size:1.1em;overflow-x:auto;padding:6px 0}
+.f-card .f-note{font-size:13.5px;color:var(--ink-3);margin:0}
+.f-card .f-actions{display:flex;gap:6px;margin-top:auto;padding-top:6px;border-top:1px dashed var(--line)}
+.f-card.is-pinned{border-color:var(--accent-line);background:linear-gradient(var(--accent-soft),var(--accent-soft)) top/100% 3px no-repeat,var(--surface)}
+.f-card.flash{animation:flash 1.6s var(--ease)}
+@keyframes flash{0%,40%{box-shadow:0 0 0 4px var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
+.empty{padding:40px;text-align:center;color:var(--ink-3)}
+
+/* ---------- Kuis ---------- */
+.quiz-wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+.q-card{padding:24px;margin-bottom:14px}
+.q-meta{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}
+.q-prompt{font-size:17px;color:var(--ink);margin-bottom:14px}
+.q-opts{display:grid;gap:8px}
+.q-opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line-strong);background:var(--surface);cursor:pointer;font-size:15.5px;min-height:46px;transition:border-color .15s,background .15s}
+.q-opt:hover:not([disabled]){border-color:var(--ink-3);background:var(--surface-2)}
+.q-opt .key{font-family:var(--f-mono);font-size:12px;width:24px;height:24px;border-radius:6px;border:1px solid var(--line-strong);display:grid;place-items:center;flex:none;color:var(--ink-3);margin-top:1px}
+.q-opt[disabled]{cursor:default}
+.q-opt.correct{border-color:var(--ok);background:var(--ok-soft)}
+.q-opt.correct .key{background:var(--ok);border-color:var(--ok);color:#fff}
+.q-opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.q-opt.wrong .key{background:var(--bad);border-color:var(--bad);color:#fff}
+.q-explain{margin-top:14px;padding:14px 16px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line);font-size:15px;color:var(--ink-2)}
+.q-explain .verdict{font-weight:700;margin-right:6px}
+.q-explain .verdict.ok{color:var(--ok)} .q-explain .verdict.no{color:var(--bad)}
+.score-card{padding:20px;position:sticky;top:calc(var(--topbar-h) + 24px);display:flex;flex-direction:column;gap:14px}
+.score-big{font-family:var(--f-display);font-size:44px;font-weight:600;letter-spacing:-.02em;line-height:1}
+.score-big small{font-size:20px;color:var(--ink-3);font-weight:500}
+.ai-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:12px;align-items:end;padding:18px 20px;margin-bottom:16px}
+.flash-stage{perspective:1200px;max-width:640px;margin:0 auto}
+.flashcard{position:relative;width:100%;height:300px;border:0;padding:0;background:none;cursor:pointer;transform-style:preserve-3d;transition:transform .55s var(--ease)}
+.flashcard.flipped{transform:rotateY(180deg)}
+.flashcard .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--r-lg);border:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px;text-align:center;box-shadow:var(--shadow)}
+.flashcard .back{transform:rotateY(180deg)}
+.flashcard .face h3{font-size:26px}
+.flashcard .face .hint{font-size:13px;color:var(--ink-3);position:absolute;bottom:16px}
+.flashcard .face .f-math{font-size:1.35em;max-width:100%;overflow-x:auto}
+.flash-nav{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:18px;flex-wrap:wrap}
+.flash-count{font-family:var(--f-mono);font-size:13px;color:var(--ink-2);min-width:64px;text-align:center}
+.spinner{width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- Soal ---------- */
+.soal-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:40px;align-items:start}
+.soal-index{position:sticky;top:calc(var(--topbar-h) + 24px);display:flex;flex-direction:column;gap:2px}
+.soal-index a{display:flex;flex-direction:column;padding:8px 10px;border-radius:9px;text-decoration:none;color:var(--ink-2);font-size:14px;line-height:1.3}
+.soal-index a small{font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.soal-index a:hover{background:var(--surface-2);color:var(--ink)}
+.soal-index a.is-done{box-shadow:inset 2px 0 0 var(--ok)}
+.problem{margin-bottom:28px;overflow:hidden}
+.problem-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;padding:16px 24px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.problem-head h2{font-size:22px}
+.problem-body{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;padding:24px}
+.problem-body.no-fig{grid-template-columns:1fr}
+.problem-statement{font-size:16px;color:var(--ink)}
+.problem-statement ol{padding-left:22px;margin:12px 0 0}
+.problem-statement li{margin:6px 0;color:var(--ink-2)}
+.problem-fig{border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);padding:12px;align-self:start}
+.problem-fig svg{width:100%;height:auto}
+.problem-fig figcaption{font-size:12.5px;color:var(--ink-3);margin-top:6px;text-align:center}
+.given{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.work{padding:0 24px 24px}
+.work textarea{min-height:110px}
+.work-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.work-actions .spacer{flex:1}
+.hint-steps{display:inline-flex;border:1px solid var(--line-strong);border-radius:10px;overflow:hidden}
+.hint-steps button{border:0;border-right:1px solid var(--line-strong);background:var(--surface);min-height:38px;padding:6px 12px;font-size:13.5px;font-weight:600;cursor:pointer;display:inline-flex;gap:6px;align-items:center;color:var(--ink)}
+.hint-steps button:last-child{border-right:0}
+.hint-steps button:hover:not([disabled]){background:var(--surface-2)}
+.hint-steps button[disabled]{color:var(--ink-3);cursor:not-allowed;background:var(--surface-2)}
+.hint-steps button.used{color:var(--accent)}
+.feedback{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+.fb{border:1px solid var(--line);border-radius:var(--r-md);padding:14px 16px;background:var(--surface-2);font-size:15px}
+.fb-head{display:flex;gap:8px;align-items:center;font-size:12.5px;font-weight:600;color:var(--ink-3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.fb.v-benar{border-color:var(--ok);background:var(--ok-soft)}
+.fb.v-sebagian{border-color:var(--warn);background:var(--warn-soft)}
+.fb.v-salah{border-color:var(--bad);background:var(--bad-soft)}
+.verdict-pill{font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;text-transform:none;letter-spacing:0}
+.v-benar .verdict-pill{background:var(--ok);color:#fff}
+.v-sebagian .verdict-pill{background:var(--warn);color:#fff}
+.v-salah .verdict-pill{background:var(--bad);color:#fff}
+details.key{margin-top:12px;border:1px dashed var(--line-strong);border-radius:var(--r-md);padding:10px 14px;font-size:14.5px}
+details.key summary{cursor:pointer;font-weight:600;color:var(--ink-2)}
+details.key ul{margin:8px 0 0;padding-left:20px;color:var(--ink-2)}
+
+/* ---------- Chat ---------- */
+.chat{display:flex;flex-direction:column;height:100%;min-height:0;background:var(--surface)}
+.chat-head{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.chat-head .title{display:flex;flex-direction:column;line-height:1.2;flex:1;min-width:0}
+.chat-head .title b{font-family:var(--f-display);font-size:18px;font-weight:600}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-3)}
+.status i{width:7px;height:7px;border-radius:50%;background:var(--ink-3)}
+.status[data-s="ready"] i{background:var(--ok)}
+.status[data-s="checking"] i{background:var(--warn);animation:pulse 1.2s infinite}
+.status[data-s="offline"] i,.status[data-s="blocked"] i{background:var(--bad)}
+@keyframes pulse{50%{opacity:.3}}
+.chat-tools{display:flex;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.chat-tools select{min-height:34px;padding:4px 8px;border-radius:8px;border:1px solid var(--line-strong);background:var(--surface);font-size:13.5px;max-width:200px}
+.ctx{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:6px;min-width:0;flex:1}
+.ctx span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-log{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:14px;min-height:0;overscroll-behavior:contain}
+.msg{max-width:100%;font-size:15px;line-height:1.6}
+.msg.user{align-self:flex-end;max-width:88%;background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:14px 14px 4px 14px;white-space:pre-wrap;word-break:break-word}
+.msg.bot{align-self:stretch;color:var(--ink)}
+.msg.bot .who{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink-3);margin-bottom:4px}
+.msg.sys{align-self:stretch;font-size:13.5px;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.msg.sys.warn{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+.msg .act{display:inline-flex;gap:6px;align-items:center;font-size:12.5px;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:99px;padding:2px 10px;margin:6px 6px 0 0}
+.md p{margin:0 0 10px}
+.md p:last-child{margin-bottom:0}
+.md ul,.md ol{margin:6px 0 10px;padding-left:22px}
+.md li{margin:3px 0}
+.md h4,.md h5{font-family:var(--f-body);font-size:15px;font-weight:700;margin:12px 0 6px;letter-spacing:0}
+.md pre{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px;overflow-x:auto;font-size:13px}
+.md code{background:var(--surface-2);border:1px solid var(--line);padding:0 4px;border-radius:4px}
+.md pre code{border:0;padding:0;background:none}
+.md blockquote{margin:8px 0;padding:4px 12px;border-left:3px solid var(--line-strong);color:var(--ink-2)}
+.md table{border-collapse:collapse;margin:8px 0;font-size:14px;display:block;overflow-x:auto}
+.md th,.md td{border:1px solid var(--line);padding:5px 9px;text-align:left}
+.md .mblock{overflow-x:auto;margin:8px 0}
+.md hr{border:0;border-top:1px solid var(--line);margin:12px 0}
+.cursor::after{content:"";display:inline-block;width:7px;height:15px;background:var(--accent);margin-left:2px;vertical-align:-2px;animation:pulse 1s infinite}
+.chat-sugg{padding:0 14px 10px;display:flex;gap:6px;flex-wrap:wrap}
+.chat-sugg .chip{font-size:13px;min-height:32px;padding:5px 11px}
+.chat-form{display:flex;gap:8px;align-items:flex-end;padding:12px 14px;border-top:1px solid var(--line);background:var(--surface)}
+.chat-form textarea{flex:1;min-height:44px;max-height:160px;resize:none;border-radius:12px}
+.chat-empty{margin:auto 0;text-align:left;color:var(--ink-2);font-size:14.5px;padding:8px 2px}
+.chat-empty h3{font-size:22px;margin-bottom:6px;color:var(--ink)}
+.fab{position:fixed;right:20px;bottom:20px;z-index:45;display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 20px 0 16px;border-radius:99px;border:0;background:var(--ink);color:var(--bg);font-weight:600;font-size:15px;cursor:pointer;box-shadow:var(--shadow-lg);transition:transform .2s var(--ease),opacity .2s}
+.fab:hover{transform:translateY(-2px)}
+.fab .icon{width:20px;height:20px}
+.fab[hidden]{display:none}
+.drawer{position:fixed;top:var(--topbar-h);right:0;bottom:0;width:min(var(--drawer-w),100vw);z-index:60;border-left:1px solid var(--line);box-shadow:var(--shadow-lg);background:var(--surface);
+  transform:translateX(102%);transition:transform .3s var(--ease),visibility 0s linear .3s;visibility:hidden;display:flex;flex-direction:column}
+.drawer.open{transform:none;visibility:visible;transition:transform .3s var(--ease)}
+.drawer-host{flex:1;min-height:0;display:flex;flex-direction:column}
+@media (min-width:1280px){ body.drawer-open main{margin-right:var(--drawer-w)} }
+.tutor-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+.tutor-host{height:min(72vh,760px);min-height:520px;overflow:hidden;display:flex;flex-direction:column}
+.tutor-side{display:flex;flex-direction:column;gap:14px}
+.tutor-side .card{padding:18px}
+.tutor-side h3{font-family:var(--f-body);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);margin-bottom:10px}
+.mode-list{display:flex;flex-direction:column;gap:6px}
+.mode-item{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;gap:2px}
+.mode-item b{font-size:14px}
+.mode-item span{font-size:13px;color:var(--ink-3);line-height:1.4}
+.mode-item[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+
+/* ---------- Toast & dialog ---------- */
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);z-index:90;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s var(--ease);max-width:min(92vw,480px);text-align:center;box-shadow:var(--shadow-lg)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+dialog.dlg{border:1px solid var(--line);border-radius:var(--r-lg);padding:24px;max-width:min(92vw,420px);background:var(--surface);color:var(--ink);box-shadow:var(--shadow-lg)}
+dialog.dlg::backdrop{background:rgba(10,10,14,.45)}
+dialog.dlg h2{font-size:22px;margin-bottom:8px}
+dialog.dlg p{color:var(--ink-2)}
+dialog.dlg .btn-row{justify-content:flex-end;margin-top:18px}
+footer.site{border-top:1px solid var(--line);padding:28px 0 100px;color:var(--ink-3);font-size:13.5px}
+footer.site .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* ---------- Responsif ---------- */
+@media (max-width:1080px){
+  .sim-grid,.quiz-wrap,.tutor-layout{grid-template-columns:minmax(0,1fr)}
+  .score-card{position:static}
+  .problem-body{grid-template-columns:minmax(0,1fr)}
+  .problem-fig{max-width:420px}
+}
+@media (max-width:960px){
+  .topbar-in{flex-wrap:wrap;height:auto;padding-top:10px;gap:10px}
+  .nav{order:3;width:calc(100% + 48px);margin:0 -24px;border-radius:0;border-width:1px 0 0;background:transparent;overflow-x:auto;scrollbar-width:none;padding:6px 18px}
+  .nav::-webkit-scrollbar{display:none}
+  .top-actions{margin-left:auto}
+  html{scroll-padding-top:130px}
+  .drawer{top:0;z-index:70}
+  .hero{grid-template-columns:minmax(0,1fr);gap:28px}
+  .materi-grid,.soal-layout{grid-template-columns:minmax(0,1fr);gap:16px}
+  .toc,.soal-index{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px;scrollbar-width:thin}
+  .toc-title{display:none}
+  .toc a,.soal-index a{flex:none;border:1px solid var(--line);background:var(--surface)}
+  .tiles{grid-template-columns:repeat(2,1fr)}
+  .ai-form{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .ai-form .btn{grid-column:1/-1}
+}
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+  .nav{width:calc(100% + 32px);margin:0 -16px;padding:6px 10px}
+  .view{padding:24px 0 110px}
+  .brand-sub{display:none}
+  .progress-pill span.lbl{display:none}
+  .tiles{grid-template-columns:1fr}
+  .hero-figure canvas{height:230px}
+  .progress-panel{grid-template-columns:1fr;gap:12px}
+  .eq-grid,.compare{grid-template-columns:1fr}
+  .compare>div+div{border-left:0;border-top:1px solid var(--line)}
+  .calc{grid-template-columns:1fr 1fr}
+  .calc-out{grid-column:1/-1}
+  .ai-form{grid-template-columns:1fr 1fr}
+  .stage-canvas{height:220px}
+  .stage-canvas.tall{height:300px}
+  .graph-canvas{height:210px}
+  .problem-head,.problem-body,.work{padding-left:16px;padding-right:16px}
+  .pad,.q-card{padding:18px}
+  .fab{right:14px;bottom:14px;padding:0 16px 0 14px;min-height:48px}
+  .drawer{width:100vw;border-left:0}
+  .flashcard{height:260px}
+  .tutor-host{height:calc(100dvh - 190px);min-height:440px}
+  .chat.has-msgs .chat-sugg{display:none}
+  .eq{flex-direction:column;align-items:stretch;gap:2px;padding:12px 14px}
+  .eq-label{align-self:flex-end}
+  dl.terms{grid-template-columns:1fr;gap:2px}
+  dl.terms dd{margin-bottom:8px}
+  .stats{gap:20px}
+  .view[data-view="tutor"] .section-head .lede{display:none}
+  .view[data-view="tutor"] .section-head{margin-bottom:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+@media print{.topbar,.fab,.drawer,.transport{display:none}.view{display:block!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Lewati ke konten</a>
+
+<!-- Ikon SVG -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2 12c2.5-6 5-6 7.5 0s5 6 7.5 0 3.5-4 5-2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 5v14l12-7z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.8 7L4 20l1.1-4.3A8 8 0 1 1 21 12z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h7"/></symbol>
+    <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7 15h10"/></symbol>
+    <symbol id="i-sigma" viewBox="0 0 24 24"><path d="M18 5H6l6 7-6 7h12"/></symbol>
+    <symbol id="i-quiz" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></symbol>
+    <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></symbol>
+    <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></symbol>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="#beranda" aria-label="Osilasi Lab, ke beranda">
+      <span class="brand-mark" aria-hidden="true"><svg class="icon" style="width:20px;height:20px"><use href="#i-wave"/></svg></span>
+      <span><span class="brand-name">Osilasi Lab</span><span class="brand-sub">MODUL 11 · FISIKA DASAR</span></span>
+    </a>
+    <nav class="nav" aria-label="Bagian utama">
+      <a href="#materi"><span class="dot"></span>Materi</a>
+      <a href="#simulasi"><span class="dot"></span>Simulasi</a>
+      <a href="#rumus"><span class="dot"></span>Rumus</a>
+      <a href="#kuis"><span class="dot"></span>Kuis</a>
+      <a href="#soal"><span class="dot"></span>Soal ujian</a>
+      <a href="#tutor"><span class="dot"></span>Tutor AI</a>
+    </nav>
+    <div class="top-actions">
+      <a class="progress-pill" href="#beranda" id="progressPill" aria-label="Progres belajar">
+        <svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--surface-3)" stroke-width="4"/><circle id="ringFg" cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 18 18)" style="transition:stroke-dashoffset .5s"/></svg>
+        <span><b id="progressPct">0%</b> <span class="lbl">selesai</span></span>
+      </a>
+      <button class="btn icon-only" id="themeBtn" type="button" aria-label="Ganti ke mode gelap"><svg class="icon"><use href="#i-moon"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+<!-- ======================= BERANDA ======================= -->
+<section class="view" data-view="beranda" aria-labelledby="h-beranda">
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <p class="eyebrow">Modul 11 · Fisika Dasar</p>
+        <h1 id="h-beranda">Pegas, bandul, dan redaman yang bisa kamu <em>atur sendiri</em>.</h1>
+        <p class="lede">Enam bab materi osilasi, lab simulasi dengan grafik real time, kuis checkpoint, dan enam soal ujian lama. Kalau macet, tanya tutor AI: ia membaca bagian yang sedang kamu buka.</p>
+        <div class="btn-row">
+          <a class="btn primary" href="#materi" id="ctaStart">Mulai dari bab 1 <svg class="icon sm"><use href="#i-arrow"/></svg></a>
+          <a class="btn" href="#simulasi">Buka lab simulasi</a>
+        </div>
+        <div class="stats" aria-label="Isi situs">
+          <div><b>6</b>bab materi</div>
+          <div><b>3</b>simulasi</div>
+          <div><b id="statSoal">6</b>soal ujian</div>
+          <div><b id="statRumus">20</b>kartu rumus</div>
+        </div>
+      </div>
+      <figure class="card hero-figure" style="margin:0">
+        <canvas id="heroCanvas" aria-label="Animasi balok di ujung pegas beserta grafik simpangannya terhadap waktu" role="img"></canvas>
+        <figcaption class="hero-caption"><span class="m" data-tex="x(t)=x_m\cos(\omega t+\phi)"></span><span class="mono" id="heroReadout">ω = 3,14 rad/s · T = 2,00 s</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="card progress-panel" aria-labelledby="h-progres">
+      <div>
+        <h2 id="h-progres" style="font-size:22px">Progres belajarmu</h2>
+        <p class="muted" style="margin:2px 0 0;font-size:14px" id="progressNext">Tersimpan di peramban ini.</p>
+      </div>
+      <div>
+        <div class="bar" aria-hidden="true"><i id="progressBar" style="width:0"></i></div>
+        <div class="progress-list" id="progressList"></div>
+      </div>
+      <button class="btn sm ghost" id="resetProgress" type="button"><svg class="icon sm"><use href="#i-trash"/></svg>Hapus progres</button>
+    </div>
+
+    <div class="h2-row"><h2>Pilih tempat mulai</h2></div>
+    <div class="tiles">
+      <a class="card tile" href="#materi"><span class="tile-ico"><svg class="icon"><use href="#i-book"/></svg></span><h3>Materi</h3><p>Dari <span class="m" data-tex="x(t)"></span> sampai osilasi teredam, dengan grafik yang bisa digeser.</p><span class="go">Baca materi <svg class="icon sm"><use href="#i-arrow"/></svg></span></a>
+      <a class="card tile" href="#simulasi"><span class="tile-ico"><svg class="icon"><use href="#i-flask"/></svg></span><h3>Lab simulasi</h3><p>Atur massa, konstanta pegas, sudut, dan redaman. Lihat x, v, a, dan energi bergerak bersama.</p><span class="go">Buka lab <svg class="icon sm"><use href="#i-arrow"/></svg></span></a>
+      <a class="card tile" href="#rumus"><span class="tile-ico"><svg class="icon"><use href="#i-sigma"/></svg></span><h3>Kartu rumus</h3><p>Semua rumus modul dalam satu halaman. Cari, sorot, dan salin LaTeX-nya.</p><span class="go">Lihat rumus <svg class="icon sm"><use href="#i-arrow"/></svg></span></a>
+      <a class="card tile" href="#kuis"><span class="tile-ico"><svg class="icon"><use href="#i-quiz"/></svg></span><h3>Kuis &amp; flashcard</h3><p>Checkpoint 2 sampai 5 dari buku Halliday, plus soal baru buatan AI.</p><span class="go">Mulai kuis <svg class="icon sm"><use href="#i-arrow"/></svg></span></a>
+      <a class="card tile" href="#soal"><span class="tile-ico"><svg class="icon"><use href="#i-pen"/></svg></span><h3>Soal ujian</h3><p>Enam soal Ujian 2 dan 3 dari 2015 sampai 2024, dengan petunjuk bertahap.</p><span class="go">Kerjakan soal <svg class="icon sm"><use href="#i-arrow"/></svg></span></a>
+      <a class="card tile" href="#tutor"><span class="tile-ico"><svg class="icon"><use href="#i-spark"/></svg></span><h3>Tutor AI</h3><p>Tanya apa saja soal osilasi. Pilih gaya jawaban: penjelasan, tanya balik, atau ringkas.</p><span class="go">Buka tutor <svg class="icon sm"><use href="#i-arrow"/></svg></span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= MATERI ======================= -->
+<section class="view" data-view="materi" aria-labelledby="h-materi">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Materi</p>
+        <h1 id="h-materi">Osilasi dalam enam bab</h1>
+        <p class="lede">Urutannya mengikuti modul: gerak harmonik, gaya pegas, energi, pendulum, lalu redaman. Tandai tiap bab setelah selesai dibaca.</p>
+      </div>
+    </div>
+    <div class="materi-grid">
+      <nav class="toc" aria-label="Daftar bab" id="toc">
+        <p class="toc-title">Daftar bab</p>
+      </nav>
+      <div id="chapters">
+
+<article class="chapter" id="bab-ghs" data-bab="ghs" data-title="Osilasi harmonik">
+  <div class="chapter-head"><span class="chapter-num">01</span><h2>Osilasi harmonik</h2></div>
+  <div class="prose">
+    <p><strong>Osilasi</strong> adalah gerak bolak-balik yang berulang secara periodik. Osilasi disebut <strong>harmonik</strong> bila persamaan geraknya bisa ditulis dengan fungsi sinus atau cosinus. Balok di ujung pegas, bandul jam, dan senar gitar yang dipetik bergerak dengan cara ini.</p>
+    <p>Kalau kita pakai fungsi cosinus, simpangan benda pada saat <span class="m" data-tex="t"></span> adalah</p>
+  </div>
+  <div class="eq"><div class="mb" data-tex="x(t)=x_m\cos(\omega t+\phi)"></div><span class="eq-label">gerak harmonik sederhana</span></div>
+  <dl class="terms">
+    <dt><span class="m" data-tex="x(t)"></span></dt><dd>simpangan (posisi) pada saat <span class="m" data-tex="t"></span></dd>
+    <dt><span class="m" data-tex="x_m"></span></dt><dd>amplitudo, yaitu simpangan maksimum</dd>
+    <dt><span class="m" data-tex="\omega"></span></dt><dd>frekuensi sudut, satuannya rad/s</dd>
+    <dt><span class="m" data-tex="\phi"></span></dt><dd>tetapan fasa; nilainya menentukan keadaan benda saat <span class="m" data-tex="t=0"></span></dd>
+  </dl>
+  <div class="prose"><p>Frekuensi sudut terhubung dengan frekuensi <span class="m" data-tex="f"></span> (getaran per detik) dan periode <span class="m" data-tex="T"></span> (waktu satu getaran):</p></div>
+  <div class="eq"><div class="mb" data-tex="\omega = 2\pi f = \frac{2\pi}{T}"></div><span class="eq-label">frekuensi sudut</span></div>
+  <figure class="card figure" id="fig-phase">
+    <svg viewBox="0 0 640 220" role="img" aria-labelledby="fig-phase-t"><title id="fig-phase-t">Grafik x terhadap t untuk tetapan fasa yang bisa diubah</title><g id="figPhaseG"></g></svg>
+    <div class="fig-controls">
+      <label class="mini-range">φ <input type="range" id="figPhi" min="-180" max="180" step="15" value="0" aria-label="Tetapan fasa dalam derajat"><output id="figPhiOut">0°</output></label>
+      <label class="mini-range">x<sub>m</sub> <input type="range" id="figXm" min="0.4" max="1" step="0.05" value="0.9" aria-label="Amplitudo relatif"><output id="figXmOut">0,90</output></label>
+    </div>
+    <figcaption>Geser φ: kurva bergeser ke kiri atau ke kanan, dan simpangan awal berubah menjadi <span class="m" data-tex="x(0)=x_m\cos\phi"></span> (titik bulat).</figcaption>
+  </figure>
+  <div class="callout note">Bentuk sinus juga sah, misalnya <span class="m" data-tex="x=x_m\sin(\omega t+\phi')"></span> dengan <span class="m" data-tex="\phi'=\phi+\pi/2"></span>. Keduanya menggambarkan gerak yang sama. Contoh: untuk <span class="m" data-tex="\phi=+\pi/2"></span>, benda berada di <span class="m" data-tex="x=0"></span> saat <span class="m" data-tex="t=0"></span> dan sedang bergerak ke arah negatif.</div>
+  <div class="chapter-foot"></div>
+</article>
+
+<article class="chapter" id="bab-kecepatan" data-bab="kecepatan" data-title="Kecepatan dan percepatan">
+  <div class="chapter-head"><span class="chapter-num">02</span><h2>Kecepatan dan percepatan</h2></div>
+  <div class="prose"><p>Turunkan <span class="m" data-tex="x(t)"></span> terhadap waktu sekali untuk mendapat kecepatan, dua kali untuk percepatan.</p></div>
+  <div class="eq"><div class="mb" data-tex="v(t)=\frac{dx}{dt}=-\omega x_m\sin(\omega t+\phi)"></div><span class="eq-label"><span class="m" data-tex="v_m=\omega x_m"></span></span></div>
+  <div class="eq"><div class="mb" data-tex="a(t)=\frac{dv}{dt}=-\omega^2 x_m\cos(\omega t+\phi)=-\omega^2 x(t)"></div><span class="eq-label"><span class="m" data-tex="a_m=\omega^2 x_m"></span></span></div>
+  <div class="prose">
+    <p>Besaran <span class="m" data-tex="\omega x_m"></span> disebut amplitudo kecepatan dan <span class="m" data-tex="\omega^2 x_m"></span> amplitudo percepatan. Ketiga grafik punya bentuk sama tetapi bergeser fasa: kecepatan mendahului simpangan seperempat periode, dan percepatan selalu berlawanan tanda dengan simpangan.</p>
+    <p>Di ujung lintasan (<span class="m" data-tex="x=\pm x_m"></span>) benda berhenti sesaat dan percepatannya paling besar. Saat melewati titik setimbang, kecepatannya maksimum dan percepatannya nol.</p>
+  </div>
+  <figure class="card figure" id="fig-xva">
+    <svg viewBox="0 0 640 330" role="img" aria-labelledby="fig-xva-t"><title id="fig-xva-t">Grafik x, v, dan a terhadap waktu dengan penanda waktu</title><g id="figXvaG"></g></svg>
+    <div class="fig-controls">
+      <label class="mini-range">t / T <input type="range" id="figT" min="0" max="2" step="0.01" value="0.25" aria-label="Waktu dalam satuan periode"><output id="figTOut">0,25</output></label>
+      <span class="mono muted" id="figXvaRead" style="font-size:13px"></span>
+    </div>
+    <figcaption>Geser penanda waktu. Perhatikan bahwa a selalu berlawanan tanda dengan x.</figcaption>
+  </figure>
+  <div class="chapter-foot"></div>
+</article>
+
+<article class="chapter" id="bab-pegas" data-bab="pegas" data-title="Gaya pegas">
+  <div class="chapter-head"><span class="chapter-num">03</span><h2>Gerak harmonik dan gaya pegas</h2></div>
+  <div class="prose"><p>Masukkan percepatan GHS ke hukum Newton kedua. Gaya yang bekerja pada benda sebanding dengan simpangan dan arahnya berlawanan:</p></div>
+  <div class="eq-grid">
+    <div class="eq"><div class="mb" data-tex="F=ma=-m\omega^2x"></div></div>
+    <div class="eq"><div class="mb" data-tex="F=-kx"></div><span class="eq-label">gaya pegas</span></div>
+  </div>
+  <div class="prose"><p>Bandingkan keduanya dan kita dapat <span class="m" data-tex="k=m\omega^2"></span>. Jadi frekuensi sudut dan periode sistem pegas-balok hanya bergantung pada massa dan konstanta pegas, tidak pada amplitudo.</p></div>
+  <div class="eq-grid">
+    <div class="eq"><div class="mb" data-tex="\omega=\sqrt{\frac{k}{m}}"></div></div>
+    <div class="eq"><div class="mb" data-tex="T=2\pi\sqrt{\frac{m}{k}}"></div></div>
+  </div>
+  <figure class="card figure">
+    <svg viewBox="0 0 640 250" role="img" aria-labelledby="fig-pegas-t"><title id="fig-pegas-t">Balok pada tiga posisi: simpangan negatif, setimbang, dan positif, dengan arah gaya pegas</title><g id="figPegasG"></g></svg>
+    <figcaption>Tanda minus pada <span class="m" data-tex="F=-kx"></span>: gaya pegas selalu menarik balok kembali ke titik setimbang.</figcaption>
+  </figure>
+  <div class="card calc" id="calcPegas" aria-label="Kalkulator periode pegas">
+    <label class="field"><span>Massa m (kg)</span><input class="input" type="number" id="calcM" value="0.5" min="0.001" step="any" inputmode="decimal"></label>
+    <label class="field"><span>Konstanta k (N/m)</span><input class="input" type="number" id="calcK" value="20" min="0.001" step="any" inputmode="decimal"></label>
+    <div class="calc-out" aria-live="polite" id="calcOut"></div>
+  </div>
+  <div class="chapter-foot"></div>
+</article>
+
+<article class="chapter" id="bab-energi" data-bab="energi" data-title="Energi pada GHS">
+  <div class="chapter-head"><span class="chapter-num">04</span><h2>Energi pada gerak harmonik</h2></div>
+  <div class="prose"><p>Energi berpindah bolak-balik antara pegas (energi potensial) dan benda (energi kinetik). Dengan <span class="m" data-tex="m\omega^2=k"></span>:</p></div>
+  <div class="eq"><div class="mb" data-tex="U=\tfrac12kx^2=\tfrac12kx_m^2\cos^2(\omega t+\phi)"></div><span class="eq-label">energi potensial</span></div>
+  <div class="eq"><div class="mb" data-tex="K=\tfrac12mv^2=\tfrac12kx_m^2\sin^2(\omega t+\phi)"></div><span class="eq-label">energi kinetik</span></div>
+  <div class="eq"><div class="mb" data-tex="E=U+K=\tfrac12kx_m^2"></div><span class="eq-label">konstan</span></div>
+  <div class="prose"><p>Selama tidak ada gesekan, jumlahnya tetap. Grafik <span class="m" data-tex="U(t)"></span> dan <span class="m" data-tex="K(t)"></span> berulang dua kali dalam satu periode osilasi, jadi periode energi sama dengan <span class="m" data-tex="T/2"></span>. Hal ini sering dipakai di soal, misalnya soal ujian 2017/2018 di bagian Soal ujian.</p></div>
+  <figure class="card figure" id="fig-energi">
+    <svg viewBox="0 0 640 280" role="img" aria-labelledby="fig-energi-t"><title id="fig-energi-t">Kurva energi potensial U terhadap x dengan garis energi total</title><g id="figEnergiG"></g></svg>
+    <div class="fig-controls">
+      <label class="mini-range">x / x<sub>m</sub> <input type="range" id="figEx" min="-1" max="1" step="0.01" value="0.5" aria-label="Posisi relatif terhadap amplitudo"><output id="figExOut">0,50</output></label>
+      <span class="mono muted" id="figEnergiRead" style="font-size:13px"></span>
+    </div>
+    <figcaption>Di setiap posisi, jarak dari parabola ke garis E adalah energi kinetik. Di <span class="m" data-tex="x=\pm x_m/2"></span>, U baru seperempat E.</figcaption>
+  </figure>
+  <div class="chapter-foot"></div>
+</article>
+
+<article class="chapter" id="bab-pendulum" data-bab="pendulum" data-title="Pendulum">
+  <div class="chapter-head"><span class="chapter-num">05</span><h2>Pendulum sederhana dan fisis</h2></div>
+  <div class="prose"><p>Pendulum yang disimpangkan sebesar <span class="m" data-tex="\theta"></span> mendapat torsi pemulih dari gravitasi. Tanda minus di sini mirip tanda minus pada <span class="m" data-tex="F=-kx"></span>: torsinya melawan arah simpangan.</p></div>
+  <div class="eq-grid">
+    <div class="eq"><div class="mb" data-tex="\tau=-L\,mg\sin\theta"></div><span class="eq-label">torsi pemulih</span></div>
+    <div class="eq"><div class="mb" data-tex="I\alpha=-L\,mg\sin\theta"></div></div>
+  </div>
+  <div class="prose"><p>Untuk sudut kecil, <span class="m" data-tex="\sin\theta\approx\theta"></span> (dalam radian), sehingga persamaannya berbentuk GHS:</p></div>
+  <div class="eq"><div class="mb" data-tex="\alpha=-\frac{mgL}{I}\,\theta\quad\Rightarrow\quad \omega=\sqrt{\frac{mgL}{I}},\qquad T=2\pi\sqrt{\frac{I}{mgL}}"></div></div>
+  <div class="prose"><p>Bila beban bisa dianggap benda titik berjarak <span class="m" data-tex="L"></span> dari poros, <span class="m" data-tex="I=mL^2"></span> dan massanya saling coret:</p></div>
+  <div class="eq"><div class="mb" data-tex="T=2\pi\sqrt{\frac{L}{g}}"></div><span class="eq-label">pendulum sederhana</span></div>
+  <div class="card compare" role="table" aria-label="Perbandingan pendulum dan pegas">
+    <div role="rowgroup"><h4 role="columnheader">Pendulum</h4>
+      <div class="row" role="row">Percepatan sudut<div class="mb" data-tex="\alpha=-\frac{mgL}{I}\theta"></div></div>
+      <div class="row" role="row">Solusi umum<div class="mb" data-tex="\theta=\theta_m\cos(\omega t+\phi)"></div></div>
+      <div class="row" role="row">Frekuensi sudut<div class="mb" data-tex="\omega=\sqrt{mgL/I}"></div></div>
+      <div class="row" role="row">Periode<div class="mb" data-tex="T=2\pi\sqrt{I/mgL}"></div></div>
+    </div>
+    <div role="rowgroup"><h4 role="columnheader">Osilasi pegas</h4>
+      <div class="row" role="row">Percepatan<div class="mb" data-tex="a=-\frac{k}{m}x"></div></div>
+      <div class="row" role="row">Solusi umum<div class="mb" data-tex="x=x_m\cos(\omega t+\phi)"></div></div>
+      <div class="row" role="row">Frekuensi sudut<div class="mb" data-tex="\omega=\sqrt{k/m}"></div></div>
+      <div class="row" role="row">Periode<div class="mb" data-tex="T=2\pi\sqrt{m/k}"></div></div>
+    </div>
+  </div>
+  <figure class="card figure">
+    <svg viewBox="0 0 640 300" role="img" aria-labelledby="fig-pend-t"><title id="fig-pend-t">Diagram pendulum dengan panjang tali L, sudut theta, dan komponen gaya berat</title><g id="figPendG"></g></svg>
+    <figcaption>Komponen <span class="m" data-tex="mg\sin\theta"></span> menyinggung lintasan dan menarik beban kembali ke posisi setimbang.</figcaption>
+  </figure>
+  <div class="callout"><strong>Seberapa kecil "sudut kecil"?</strong> Sampai sekitar 15°, periode sebenarnya hanya lebih panjang kurang dari 0,5% dibanding <span class="m" data-tex="2\pi\sqrt{L/g}"></span>. Di 60° selisihnya sekitar 7%. Coba bandingkan sendiri di simulasi pendulum.</div>
+  <div class="callout" style="margin-top:12px"><strong>Pendulum fisis bermassa beda.</strong> Untuk benda dengan bentuk dan ukuran sama, <span class="m" data-tex="I"></span> sebanding dengan <span class="m" data-tex="m"></span>, jadi <span class="m" data-tex="I/(mgL)"></span> tidak bergantung massa. Itu sebabnya ketiga pendulum di Checkpoint 5 punya periode yang sama.</div>
+  <div class="chapter-foot"></div>
+</article>
+
+<article class="chapter" id="bab-teredam" data-bab="teredam" data-title="Osilasi teredam">
+  <div class="chapter-head"><span class="chapter-num">06</span><h2>Osilasi teredam</h2></div>
+  <div class="prose"><p>Di lantai kasar atau di dalam fluida, ada gaya redaman yang sebanding dengan kecepatan, <span class="m" data-tex="F_d=-bv"></span>, dengan <span class="m" data-tex="b"></span> dalam kg/s. Hukum Newton kedua menjadi</p></div>
+  <div class="eq"><div class="mb" data-tex="m\frac{d^2x}{dt^2}+b\frac{dx}{dt}+kx=0"></div></div>
+  <div class="prose"><p>Solusinya berupa cosinus yang amplitudonya meluruh secara eksponensial:</p></div>
+  <div class="eq"><div class="mb" data-tex="x(t)=x_m e^{-bt/2m}\cos(\omega' t+\phi)"></div></div>
+  <div class="eq"><div class="mb" data-tex="\omega'=\sqrt{\frac{k}{m}-\left(\frac{b}{2m}\right)^2}"></div><span class="eq-label">sedikit lebih kecil dari ω</span></div>
+  <figure class="card figure" id="fig-teredam">
+    <svg viewBox="0 0 640 240" role="img" aria-labelledby="fig-ter-t"><title id="fig-ter-t">Grafik osilasi teredam dengan selubung eksponensial</title><g id="figTeredamG"></g></svg>
+    <div class="fig-controls">
+      <label class="mini-range">b / 2√(km) <input type="range" id="figZeta" min="0.02" max="0.6" step="0.01" value="0.12" aria-label="Rasio redaman"><output id="figZetaOut">0,12</output></label>
+    </div>
+    <figcaption>Garis putus-putus adalah selubung <span class="m" data-tex="\pm x_m e^{-bt/2m}"></span>. Makin besar b, makin cepat amplitudo mengecil.</figcaption>
+  </figure>
+  <div class="callout note"><strong>Tambahan di luar modul.</strong> Rumus <span class="m" data-tex="\omega'"></span> hanya bermakna bila <span class="m" data-tex="b&lt;2\sqrt{km}"></span> (kurang redam). Saat <span class="m" data-tex="b=2\sqrt{km}"></span> (redaman kritis) benda kembali ke setimbang paling cepat tanpa berosilasi. Saat <span class="m" data-tex="b&gt;2\sqrt{km}"></span> (lebih redam) benda juga tidak berosilasi, tetapi kembalinya lebih lambat. Bandingkan ketiganya di simulasi.</div>
+  <div class="chapter-foot"></div>
+</article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= SIMULASI ======================= -->
+<section class="view" data-view="simulasi" aria-labelledby="h-sim">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Lab simulasi</p>
+        <h1 id="h-sim">Atur, jalankan, amati</h1>
+        <p class="lede">Simulasi dihitung langsung dari persamaan gerak dengan metode Runge-Kutta. Ubah angka di panel parameter; grafik dan energi ikut berubah.</p>
+      </div>
+    </div>
+    <div class="sim-top">
+      <div class="seg" role="tablist" aria-label="Pilih simulasi" id="simTabs">
+        <button role="tab" id="tab-pegas" aria-controls="sim-pegas" aria-selected="true" data-sim="pegas">Pegas-balok</button>
+        <button role="tab" id="tab-pendulum" aria-controls="sim-pendulum" aria-selected="false" data-sim="pendulum" tabindex="-1">Pendulum</button>
+        <button role="tab" id="tab-teredam" aria-controls="sim-teredam" aria-selected="false" data-sim="teredam" tabindex="-1">Redaman</button>
+      </div>
+      <button class="btn sm" type="button" id="simAsk"><svg class="icon sm"><use href="#i-spark"/></svg>Tanya tutor tentang setelan ini</button>
+    </div>
+
+    <!-- Pegas -->
+    <div class="sim-grid" role="tabpanel" id="sim-pegas" aria-labelledby="tab-pegas">
+      <div class="card stage">
+        <canvas class="stage-canvas" id="pgStage" role="img" aria-label="Balok pada pegas horizontal"></canvas>
+        <canvas class="graph-canvas" id="pgGraph" role="img" aria-label="Grafik simpangan, kecepatan, dan percepatan terhadap waktu"></canvas>
+        <div class="legend" aria-hidden="true"><span><i style="background:var(--c-x)"></i>x(t)</span><span><i style="background:var(--c-v)"></i>v(t)</span><span><i style="background:var(--c-a)"></i>a(t)</span><span class="muted">jendela waktu menyesuaikan periode</span></div>
+        <div class="transport" data-transport="pegas"></div>
+      </div>
+      <div class="card panel">
+        <h3>Parameter</h3>
+        <div id="pgSliders" style="display:flex;flex-direction:column;gap:10px"></div>
+        <label class="toggle"><input type="checkbox" id="pgVec" checked> Tampilkan vektor v dan a</label>
+        <div class="field"><span>Setelan dari soal ujian</span>
+          <select class="input" id="pgPreset" aria-label="Setelan dari soal ujian">
+            <option value="">Pilih setelan…</option>
+            <option value="u2-1718">2017/2018: m = 10 g, k = 64 N/m</option>
+            <option value="pr2">PR2: pegas digantung, m = 300 g</option>
+            <option value="pr3">PR3: m = 0,6 kg, k = 60 N/m</option>
+            <option value="u3-1516">2015/2016: peluru + balok</option>
+            <option value="u3-2324">2023/2024: balok A dan B</option>
+          </select>
+        </div>
+        <h3>Energi</h3>
+        <div class="energy" id="pgEnergy">
+          <div class="ebar"><span class="lbl" style="color:var(--c-U)">U</span><span class="track"><i style="background:var(--c-U)"></i></span><span class="val">0</span></div>
+          <div class="ebar"><span class="lbl" style="color:var(--c-K)">K</span><span class="track"><i style="background:var(--c-K)"></i></span><span class="val">0</span></div>
+          <div class="ebar"><span class="lbl">E</span><span class="track"><i style="background:var(--ink-2)"></i></span><span class="val">0</span></div>
+        </div>
+        <h3>Hasil hitung <span class="regime" id="pgRegime" style="margin-left:6px;text-transform:none;letter-spacing:0">tanpa redaman</span></h3>
+        <div class="readouts" id="pgRead"></div>
+      </div>
+    </div>
+
+    <!-- Pendulum -->
+    <div class="sim-grid" role="tabpanel" id="sim-pendulum" aria-labelledby="tab-pendulum" hidden>
+      <div class="card stage">
+        <canvas class="stage-canvas tall" id="pdStage" role="img" aria-label="Pendulum berayun"></canvas>
+        <canvas class="graph-canvas" id="pdGraph" role="img" aria-label="Grafik sudut terhadap waktu, persamaan eksak dan pendekatan sudut kecil"></canvas>
+        <div class="legend" aria-hidden="true"><span><i style="background:var(--c-x)"></i>θ(t) eksak</span><span style="color:var(--c-v)"><i class="dash" style="background:var(--c-v)"></i><span style="color:var(--ink-2)">pendekatan sudut kecil</span></span></div>
+        <div class="transport" data-transport="pendulum"></div>
+      </div>
+      <div class="card panel">
+        <h3>Parameter</h3>
+        <div id="pdSliders" style="display:flex;flex-direction:column;gap:10px"></div>
+        <div class="field"><span>Gravitasi</span>
+          <div class="preset-row" id="gPresets">
+            <button class="chip" type="button" data-g="9.8">Bumi</button>
+            <button class="chip" type="button" data-g="1.62">Bulan</button>
+            <button class="chip" type="button" data-g="3.71">Mars</button>
+            <button class="chip" type="button" data-g="24.8">Jupiter</button>
+          </div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="pdApprox" checked> Tampilkan bandul pendekatan sudut kecil</label>
+        <h3>Hasil hitung</h3>
+        <div class="readouts" id="pdRead"></div>
+        <p class="muted" style="font-size:13px;margin:0">Periode eksak dihitung dengan rata-rata aritmetik-geometrik: <span class="m" data-tex="T=T_0/\mathrm{AGM}(1,\cos\tfrac{\theta_0}{2})"></span>.</p>
+      </div>
+    </div>
+
+    <!-- Teredam -->
+    <div class="sim-grid" role="tabpanel" id="sim-teredam" aria-labelledby="tab-teredam" hidden>
+      <div class="card stage">
+        <canvas class="stage-canvas tall" id="tdStage" role="img" aria-label="Tiga balok pegas dengan redaman berbeda"></canvas>
+        <canvas class="graph-canvas" id="tdGraph" role="img" aria-label="Grafik simpangan tiga jenis redaman terhadap waktu"></canvas>
+        <div class="legend" aria-hidden="true"><span><i style="background:var(--c-u1)"></i>kurang redam</span><span><i style="background:var(--c-u2)"></i>redaman kritis</span><span><i style="background:var(--c-u3)"></i>lebih redam</span></div>
+        <div class="transport" data-transport="teredam"></div>
+      </div>
+      <div class="card panel">
+        <h3>Parameter</h3>
+        <div id="tdSliders" style="display:flex;flex-direction:column;gap:10px"></div>
+        <h3>Hasil hitung</h3>
+        <div class="readouts" id="tdRead"></div>
+        <p class="muted" style="font-size:13px;margin:0">Ketiga balok dilepas dari simpangan yang sama tanpa kecepatan awal. Rasio <span class="m" data-tex="\zeta=b/2\sqrt{km}"></span>: kurang dari 1 berosilasi, sama dengan 1 kritis, lebih dari 1 lebih redam.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= RUMUS ======================= -->
+<section class="view" data-view="rumus" aria-labelledby="h-rumus">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Kartu rumus</p>
+        <h1 id="h-rumus">Semua rumus Modul 11</h1>
+        <p class="lede">Klik bintang untuk menyorot rumus yang ingin kamu hafal. Tombol salin menyalin kode LaTeX-nya.</p>
+      </div>
+    </div>
+    <div class="rumus-tools">
+      <label class="search"><span class="sr-only">Cari rumus</span><svg class="icon"><use href="#i-search"/></svg><input class="input" type="search" id="fSearch" placeholder="Cari: periode, energi, pendulum…" autocomplete="off"></label>
+      <div class="chips" id="fTopics" role="group" aria-label="Saring topik"></div>
+      <label class="toggle"><input type="checkbox" id="fPinnedOnly"> Hanya yang disorot</label>
+    </div>
+    <p class="muted" id="fCount" style="font-size:13px" aria-live="polite"></p>
+    <div class="f-grid" id="fGrid"></div>
+  </div>
+</section>
+
+<!-- ======================= KUIS ======================= -->
+<section class="view" data-view="kuis" aria-labelledby="h-kuis">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Kuis</p>
+        <h1 id="h-kuis">Uji pemahamanmu</h1>
+        <p class="lede">Mulai dari checkpoint buku Halliday. Setelah itu minta AI membuat soal baru, atau hafalkan rumus lewat flashcard.</p>
+      </div>
+      <div class="seg" role="tablist" aria-label="Jenis kuis" id="quizTabs">
+        <button role="tab" id="qtab-cp" aria-controls="qp-cp" aria-selected="true" data-q="cp">Checkpoint</button>
+        <button role="tab" id="qtab-ai" aria-controls="qp-ai" aria-selected="false" data-q="ai" tabindex="-1">Soal AI</button>
+        <button role="tab" id="qtab-fc" aria-controls="qp-fc" aria-selected="false" data-q="fc" tabindex="-1">Flashcard</button>
+      </div>
+    </div>
+    <div role="tabpanel" id="qp-cp" aria-labelledby="qtab-cp">
+      <div class="quiz-wrap">
+        <div id="cpList"></div>
+        <aside class="card score-card" aria-live="polite" id="cpScore"></aside>
+      </div>
+    </div>
+    <div role="tabpanel" id="qp-ai" aria-labelledby="qtab-ai" hidden>
+      <form class="card ai-form" id="aiQuizForm">
+        <label class="field"><span>Topik</span>
+          <select class="input" id="aiTopic">
+            <option value="semua">Semua bab</option>
+            <option value="ghs">Gerak harmonik sederhana</option>
+            <option value="pegas">Gaya pegas dan periode</option>
+            <option value="energi">Energi GHS</option>
+            <option value="pendulum">Pendulum</option>
+            <option value="teredam">Osilasi teredam</option>
+          </select></label>
+        <label class="field"><span>Jumlah soal</span>
+          <select class="input" id="aiCount"><option>3</option><option selected>5</option><option>8</option></select></label>
+        <label class="field"><span>Tingkat</span>
+          <select class="input" id="aiDiff"><option value="mudah">Mudah</option><option value="sedang" selected>Sedang</option><option value="sulit">Sulit</option></select></label>
+        <button class="btn primary" type="submit" id="aiQuizBtn"><svg class="icon sm"><use href="#i-spark"/></svg>Buat soal baru dengan AI</button>
+      </form>
+      <div class="quiz-wrap">
+        <div id="aiList"><div class="card empty">Belum ada soal. Pilih topik lalu tekan <b>Buat soal baru dengan AI</b>.</div></div>
+        <aside class="card score-card" aria-live="polite" id="aiScore"></aside>
+      </div>
+    </div>
+    <div role="tabpanel" id="qp-fc" aria-labelledby="qtab-fc" hidden>
+      <div class="flash-stage">
+        <button class="flashcard" type="button" id="flashcard" aria-live="polite">
+          <span class="face front"></span>
+          <span class="face back"></span>
+        </button>
+        <div class="flash-nav">
+          <button class="btn icon-only" type="button" id="fcPrev" aria-label="Kartu sebelumnya"><svg class="icon"><use href="#i-left"/></svg></button>
+          <span class="flash-count" id="fcCount">1 / 1</span>
+          <button class="btn icon-only" type="button" id="fcNext" aria-label="Kartu berikutnya"><svg class="icon"><use href="#i-right"/></svg></button>
+          <button class="btn" type="button" id="fcShuffle"><svg class="icon sm"><use href="#i-shuffle"/></svg>Acak</button>
+        </div>
+        <p class="muted" style="text-align:center;font-size:13px;margin-top:10px">Klik kartu atau tekan <span class="kbd">Spasi</span> untuk membalik, <span class="kbd">←</span> <span class="kbd">→</span> untuk berpindah.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= SOAL ======================= -->
+<section class="view" data-view="soal" aria-labelledby="h-soal">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Bank soal ujian</p>
+        <h1 id="h-soal">Enam soal ujian lama</h1>
+        <p class="lede">Tulis langkahmu di kotak jawaban. Buka petunjuk satu per satu kalau macet, lalu minta tutor memeriksa jawabanmu.</p>
+      </div>
+    </div>
+    <div class="soal-layout">
+      <nav class="soal-index" id="soalIndex" aria-label="Daftar soal"></nav>
+      <div id="soalList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= TUTOR ======================= -->
+<section class="view" data-view="tutor" aria-labelledby="h-tutor">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Tutor AI</p>
+        <h1 id="h-tutor">Tanya soal osilasi</h1>
+        <p class="lede">Tutor membaca bagian yang terakhir kamu buka dan setelan simulasimu. Ia juga bisa mengatur simulasi atau membuka bagian lain untukmu.</p>
+      </div>
+    </div>
+    <div class="tutor-layout">
+      <div class="card tutor-host" id="tutorHost"></div>
+      <aside class="tutor-side">
+        <div class="card"><h3>Gaya jawaban</h3><div class="mode-list" id="modeList"></div></div>
+        <div class="card"><h3>Tentang tutor</h3>
+          <p style="font-size:14px;color:var(--ink-2);margin:0 0 8px">Tutor memakai Claude lewat izin <b>Tanya Claude</b> di halaman ini. Izin diminta saat kamu pertama kali mengirim pertanyaan.</p>
+          <p style="font-size:14px;color:var(--ink-2);margin:0">Tanpa izin, tutor tetap menjawab dari daftar rumus modul. Riwayat obrolan hanya ada di tab ini.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site"><div class="wrap"><span>Osilasi Lab. Materi dari Modul 11 Fisika Dasar (Osilasi), Dr. Abdul Muizz Tri Pradipto, FMIPA.</span><span>Checkpoint dari Halliday, <i>Fundamentals of Physics</i>.</span></div></footer>
+
+<button class="fab" id="tutorFab" type="button" aria-controls="drawer" aria-expanded="false"><svg class="icon"><use href="#i-chat"/></svg><span>Tanya tutor</span></button>
+<aside class="drawer" id="drawer" aria-label="Panel tutor AI"><div class="drawer-host" id="drawerHost"></div></aside>
+
+<!-- Komponen chat (dipindah antara laci dan bagian #tutor) -->
+<div class="chat" id="chat">
+  <div class="chat-head">
+    <span class="tile-ico" style="width:34px;height:34px" aria-hidden="true"><svg class="icon"><use href="#i-spark"/></svg></span>
+    <div class="title"><b>Tutor Osilasi</b><span class="status" id="aiStatus" data-s="checking"><i></i><span>Memeriksa koneksi…</span></span></div>
+    <button class="btn sm ghost icon-only" type="button" id="chatClear" aria-label="Mulai obrolan baru" title="Mulai obrolan baru"><svg class="icon sm"><use href="#i-trash"/></svg></button>
+    <a class="btn sm ghost icon-only" href="#tutor" id="chatExpand" aria-label="Buka tutor layar penuh" title="Buka layar penuh"><svg class="icon sm"><use href="#i-expand"/></svg></a>
+    <button class="btn sm ghost icon-only" type="button" id="chatClose" aria-label="Tutup panel tutor"><svg class="icon sm"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="chat-tools">
+    <label class="sr-only" for="modeSel">Gaya jawaban</label>
+    <select id="modeSel"></select>
+    <span class="ctx" title="Konteks yang dikirim ke tutor"><svg class="icon sm" aria-hidden="true"><use href="#i-book"/></svg><span id="ctxLabel">Beranda</span></span>
+  </div>
+  <div class="chat-log" id="chatLog" role="log" aria-live="polite" aria-relevant="additions"></div>
+  <div class="chat-sugg" id="chatSugg" aria-label="Saran pertanyaan"></div>
+  <form class="chat-form" id="chatForm">
+    <label class="sr-only" for="chatInput">Pertanyaanmu</label>
+    <textarea class="input" id="chatInput" rows="1" placeholder="Tulis pertanyaan…" aria-describedby="chatKeys"></textarea>
+    <span class="sr-only" id="chatKeys">Enter untuk mengirim, Shift+Enter untuk baris baru.</span>
+    <button class="btn primary icon-only" type="submit" id="chatSend" aria-label="Kirim"><svg class="icon"><use href="#i-send"/></svg></button>
+    <button class="btn icon-only" type="button" id="chatStop" aria-label="Hentikan jawaban" hidden><svg class="icon"><use href="#i-stop"/></svg></button>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog class="dlg" id="dlg" aria-labelledby="dlgTitle">
+  <h2 id="dlgTitle"></h2>
+  <p id="dlgBody"></p>
+  <div class="btn-row"><button class="btn" type="button" id="dlgCancel">Batal</button><button class="btn primary" type="button" id="dlgOk">Lanjut</button></div>
+</dialog>
+<textarea id="copyBuf" aria-hidden="true" tabindex="-1" style="position:fixed;left:-9999px;top:0;opacity:0"></textarea>
+
+<script src="tutor.js"></script>
+<script>
+(function(){
+'use strict';
+/* ==================== Utilitas ==================== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const reduceMotion=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)').matches:false;
+const nf=(n,d=2)=>{ if(n==null||!isFinite(n)) return '–';
+  const a=Math.abs(n); if(a!==0&&(a<1e-3||a>=1e6)){ const e=Math.floor(Math.log10(a)); const m=n/Math.pow(10,e); return m.toLocaleString('id-ID',{maximumFractionDigits:2})+'×10'+sup(e);}
+  return n.toLocaleString('id-ID',{minimumFractionDigits:0,maximumFractionDigits:d}); };
+const sup=e=>String(e).replace(/-/g,'⁻').replace(/\d/g,d=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+const sig=(n,s=3)=>{ if(n==null||!isFinite(n)) return '–'; if(n===0) return '0'; const d=clamp(s-1-Math.floor(Math.log10(Math.abs(n))),0,6); return nf(n,d); };
+function h(tag,attrs,...kids){ const el=document.createElement(tag); if(attrs) for(const k in attrs){ const v=attrs[k]; if(v==null||v===false) continue;
+  if(k==='class') el.className=v; else if(k==='html') el.innerHTML=v; else if(k==='text') el.textContent=v; else if(k.startsWith('on')) el.addEventListener(k.slice(2),v); else el.setAttribute(k,v===true?'':v);}
+  for(const c of kids.flat()){ if(c==null||c===false) continue; el.append(c.nodeType?c:document.createTextNode(c)); } return el; }
+const icon=(id,cls='icon sm')=>`<svg class="${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+const store={ key:'osilasi-lab-v1', data:{},
+  load(){ try{ this.data=JSON.parse(localStorage.getItem(this.key)||'{}')||{}; }catch(e){ this.data={}; } },
+  save(){ try{ localStorage.setItem(this.key,JSON.stringify(this.data)); }catch(e){} },
+  get(k,d){ return this.data[k]!==undefined?this.data[k]:d; }, set(k,v){ this.data[k]=v; this.save(); } };
+store.load();
+let toastT; function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600); }
+function askDialog(title,body,okLabel){ return new Promise(res=>{ const d=$('#dlg'); $('#dlgTitle').textContent=title; $('#dlgBody').textContent=body; $('#dlgOk').textContent=okLabel||'Lanjut';
+  const done=v=>{ try{d.close()}catch(e){} $('#dlgOk').onclick=$('#dlgCancel').onclick=null; res(v); };
+  $('#dlgOk').onclick=()=>done(true); $('#dlgCancel').onclick=()=>done(false); d.oncancel=()=>done(false);
+  try{ d.showModal(); }catch(e){ res(false); } }); }
+async function copyText(text){
+  try{ if(navigator.clipboard&&window.isSecureContext!==false){ await navigator.clipboard.writeText(text); return true; } }catch(e){}
+  try{ const b=$('#copyBuf'); b.value=text; b.select(); const ok=document.execCommand('copy'); b.blur(); return ok; }catch(e){ return false; } }
+
+/* ==================== Matematika (KaTeX, keluaran MathML) ==================== */
+function texHTML(tex,display){
+  if(window.katex){ try{ return katex.renderToString(tex,{output:'mathml',displayMode:!!display,throwOnError:false,strict:'ignore',trust:false}); }catch(e){} }
+  return `<code class="tex">${esc(tex)}</code>`; }
+function renderStaticMath(root=document){
+  $$('[data-tex]',root).forEach(el=>{ el.innerHTML=texHTML(el.getAttribute('data-tex'), el.classList.contains('mb')); }); }
+const mdNodes=new Set();
+function setMD(el,src,inline){ el.__md=src; el.__inl=!!inline; el.innerHTML=inline?mdInline(src):md(src); mdNodes.add(el); return el; }
+function loadKatex(){
+  const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js'; s.async=true; s.crossOrigin='anonymous';
+  s.onload=()=>{ renderStaticMath(); mdNodes.forEach(el=>{ if(el.isConnected) el.innerHTML=el.__inl?mdInline(el.__md):md(el.__md); else mdNodes.delete(el); }); renderFormulaMath(); };
+  s.onerror=()=>{ /* tetap tampil sebagai kode LaTeX */ };
+  document.head.appendChild(s); }
+
+/* ==================== Markdown ringan + LaTeX (aman) ==================== */
+function md(src){
+  const slots=[]; const keep=html=>{ slots.push(html); return '\u0000'+(slots.length-1)+'\u0000'; };
+  let s=String(src??'').replace(/\r\n?/g,'\n');
+  s=s.replace(/```[^\n]*\n?([\s\S]*?)(```|$)/g,(m,c)=>'\n'+keep(`<pre><code>${esc(c.replace(/\n$/,''))}</code></pre>`)+'\n');
+  s=s.replace(/`([^`\n]+)`/g,(m,c)=>keep(`<code>${esc(c)}</code>`));
+  s=s.replace(/\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]/g,(m,a,b)=>keep(`<div class="mblock">${texHTML((a||b).trim(),true)}</div>`));
+  s=s.replace(/\\\(([\s\S]+?)\\\)|\$(?!\s)([^$\n]+?)(?<!\s)\$/g,(m,a,b)=>keep(texHTML((a||b).trim(),false)));
+  s=esc(s);
+  const inline=t=>t
+    .replace(/\*\*([^*]+?)\*\*/g,'<strong>$1</strong>').replace(/__([^_]+?)__/g,'<strong>$1</strong>')
+    .replace(/(^|[^*\w])\*([^*\n]+?)\*(?!\w)/g,'$1<em>$2</em>').replace(/(^|\s)_([^_\n]+?)_(?=\s|$|[.,;:!?])/g,'$1<em>$2</em>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  const lines=s.split('\n'); const out=[]; let para=[], list=null;
+  const flushP=()=>{ if(para.length){ out.push('<p>'+inline(para.join('<br>'))+'</p>'); para=[]; } };
+  const flushL=()=>{ if(list){ out.push(`<${list.t}>`+list.items.map(i=>'<li>'+inline(i)+'</li>').join('')+`</${list.t}>`); list=null; } };
+  for(let i=0;i<lines.length;i++){
+    const ln=lines[i]; const tr=ln.trim(); let m;
+    if(!tr){ flushP(); flushL(); continue; }
+    if(/^\u0000\d+\u0000$/.test(tr)&&/^<(div|pre)/.test(slots[+tr.slice(1,-1)])){ flushP(); flushL(); out.push(tr); continue; }
+    if((m=tr.match(/^(#{1,6})\s+(.*)$/))){ flushP(); flushL(); const lv=m[1].length<=2?4:5; out.push(`<h${lv}>${inline(m[2])}</h${lv}>`); continue; }
+    if(/^(-{3,}|\*{3,})$/.test(tr)){ flushP(); flushL(); out.push('<hr>'); continue; }
+    if((m=tr.match(/^&gt;\s?(.*)$/))){ flushP(); flushL(); out.push('<blockquote>'+inline(m[1])+'</blockquote>'); continue; }
+    if(tr.startsWith('|')&&lines[i+1]&&/^\s*\|?\s*:?-{2,}/.test(lines[i+1])){
+      flushP(); flushL(); const row=r=>r.trim().replace(/^\||\|$/g,'').split('|').map(c=>c.trim());
+      const head=row(tr); i++; const body=[]; while(lines[i+1]&&lines[i+1].trim().startsWith('|')){ i++; body.push(row(lines[i])); }
+      out.push('<table><thead><tr>'+head.map(c=>'<th>'+inline(c)+'</th>').join('')+'</tr></thead><tbody>'+body.map(r=>'<tr>'+r.map(c=>'<td>'+inline(c)+'</td>').join('')+'</tr>').join('')+'</tbody></table>'); continue; }
+    if((m=ln.match(/^\s*[-*•]\s+(.*)$/))){ flushP(); if(!list||list.t!=='ul'){ flushL(); list={t:'ul',items:[]}; } list.items.push(m[1]); continue; }
+    if((m=ln.match(/^\s*\d+[.)]\s+(.*)$/))){ flushP(); if(!list||list.t!=='ol'){ flushL(); list={t:'ol',items:[]}; } list.items.push(m[1]); continue; }
+    if(list&&/^\s{2,}/.test(ln)){ list.items[list.items.length-1]+=' '+tr; continue; }
+    flushL(); para.push(tr);
+  }
+  flushP(); flushL();
+  return out.join('').replace(/\u0000(\d+)\u0000/g,(m,n)=>slots[+n]);
+}
+const mdInline=s=>{ const x=md(s); return x.startsWith('<p>')&&x.endsWith('</p>')&&x.indexOf('<p>',1)<0?x.slice(3,-4):x; };
+
+/* ==================== Data cadangan (dipakai bila tutor.js tidak ada) ==================== */
+const FB={};
+FB.modes=[
+  {id:'jelaskan',label:'Jelaskan',desc:'Penjelasan runtut dengan rumus dan contoh angka.'},
+  {id:'sokratik',label:'Sokratik',desc:'Tutor bertanya balik agar kamu menemukan jawabannya sendiri.'},
+  {id:'cek-jawaban',label:'Cek jawaban',desc:'Tempel langkahmu, tutor menunjukkan bagian yang keliru.'},
+  {id:'ringkas',label:'Ringkas',desc:'Jawaban pendek: rumus inti dan hasil.'},
+  {id:'eli5',label:'Bahasa sederhana',desc:'Penjelasan tanpa istilah berat, cocok untuk pemula.'}];
+FB.formulas=[
+  {id:'ghs-x',topic:'GHS',name:'Simpangan GHS',latex:'x(t)=x_m\\cos(\\omega t+\\phi)',note:'x_m amplitudo, ω frekuensi sudut, φ tetapan fasa.'},
+  {id:'omega-f-T',topic:'GHS',name:'Frekuensi sudut, frekuensi, periode',latex:'\\omega=2\\pi f=\\frac{2\\pi}{T}',note:'f dalam Hz, T dalam detik.'},
+  {id:'ghs-v',topic:'GHS',name:'Kecepatan GHS',latex:'v(t)=-\\omega x_m\\sin(\\omega t+\\phi)',note:'Turunan pertama x(t).'},
+  {id:'vmax',topic:'GHS',name:'Amplitudo kecepatan',latex:'v_m=\\omega x_m',note:'Laju terbesar, terjadi di titik setimbang.'},
+  {id:'ghs-a',topic:'GHS',name:'Percepatan GHS',latex:'a(t)=-\\omega^2x_m\\cos(\\omega t+\\phi)=-\\omega^2x',note:'Ciri GHS: a sebanding −x.'},
+  {id:'amax',topic:'GHS',name:'Amplitudo percepatan',latex:'a_m=\\omega^2x_m',note:'Terjadi di ujung lintasan.'},
+  {id:'hooke',topic:'Pegas',name:'Gaya pegas (Hooke)',latex:'F=-kx',note:'Gaya pemulih melawan simpangan.'},
+  {id:'k-omega',topic:'Pegas',name:'Konstanta pegas dan ω',latex:'k=m\\omega^2',note:'Dari F = ma = −mω²x.'},
+  {id:'omega-pegas',topic:'Pegas',name:'Frekuensi sudut pegas',latex:'\\omega=\\sqrt{\\frac{k}{m}}',note:'Tidak bergantung amplitudo.'},
+  {id:'T-pegas',topic:'Pegas',name:'Periode pegas',latex:'T=2\\pi\\sqrt{\\frac{m}{k}}',note:'Massa 4× lipat, periode 2× lipat.'},
+  {id:'U',topic:'Energi',name:'Energi potensial pegas',latex:'U=\\tfrac12kx^2=\\tfrac12kx_m^2\\cos^2(\\omega t+\\phi)',note:'Maksimum di x = ±x_m.'},
+  {id:'K',topic:'Energi',name:'Energi kinetik',latex:'K=\\tfrac12mv^2=\\tfrac12kx_m^2\\sin^2(\\omega t+\\phi)',note:'Maksimum di titik setimbang.'},
+  {id:'E',topic:'Energi',name:'Energi mekanik total',latex:'E=U+K=\\tfrac12kx_m^2',note:'Konstan bila tanpa gesekan.'},
+  {id:'K-x',topic:'Energi',name:'Energi kinetik di posisi x',latex:'K=\\tfrac12k(x_m^2-x^2)',note:'Berguna untuk soal "K = nU".'},
+  {id:'tau-pend',topic:'Pendulum',name:'Torsi pemulih pendulum',latex:'\\tau=-L\\,mg\\sin\\theta',note:'Tanda minus: melawan simpangan sudut.'},
+  {id:'alpha-pend',topic:'Pendulum',name:'Percepatan sudut (sudut kecil)',latex:'\\alpha=-\\frac{mgL}{I}\\theta',note:'Memakai sin θ ≈ θ.'},
+  {id:'T-fisis',topic:'Pendulum',name:'Periode pendulum fisis',latex:'T=2\\pi\\sqrt{\\frac{I}{mgL}}',note:'L jarak poros ke pusat massa.'},
+  {id:'T-pend',topic:'Pendulum',name:'Periode pendulum sederhana',latex:'T=2\\pi\\sqrt{\\frac{L}{g}}',note:'Benda titik, I = mL². Tak bergantung massa.'},
+  {id:'teredam-ode',topic:'Teredam',name:'Persamaan gerak teredam',latex:'m\\ddot x+b\\dot x+kx=0',note:'Gaya redaman F = −bv.'},
+  {id:'teredam-x',topic:'Teredam',name:'Simpangan osilasi teredam',latex:'x(t)=x_me^{-bt/2m}\\cos(\\omega\'t+\\phi)',note:'Amplitudo meluruh eksponensial.'},
+  {id:'omega-teredam',topic:'Teredam',name:'Frekuensi sudut teredam',latex:'\\omega\'=\\sqrt{\\frac{k}{m}-\\left(\\frac{b}{2m}\\right)^2}',note:'Berlaku bila b < 2√(km).'},
+  {id:'b-kritis',topic:'Teredam',name:'Redaman kritis',latex:'b_c=2\\sqrt{km}',note:'Tambahan di luar modul.'}];
+FB.problems=[
+  {id:'u2-1718',title:'Grafik energi pegas',source:'Ujian 2 Fisika Dasar 1A, Semester 1 2017/2018',
+   statement:'Sebuah pegas dengan konstanta tertentu dilekatkan ke dinding pada salah satu ujungnya, dan ujung lainnya terikat kuat pada benda bermassa 10 gram. Saat $t=0$, simpangannya 5 cm dan benda sedang bergerak menjauhi titik setimbangnya. Grafik menunjukkan energi kinetik benda (garis penuh) dan energi potensial pegas (garis putus-putus).',
+   parts:['Tentukan konstanta pegas dan amplitudo.','Tentukan periode getaran benda.','Nyatakan fungsi posisi $x(t)$ benda sebagai fungsi sinus.'],
+   given:{'m':'10 g','x(0)':'5 cm','E_maks':'0,32 J'}},
+  {id:'pr1',title:'Pendulum diberi laju awal',source:'Ujian 2 Fisika Dasar 1A, Semester 1 2022/2023 (PR1)',
+   statement:'Sebuah pendulum sederhana memiliki panjang tali (massanya diabaikan) 1,6 m dan massa bandul 0,4 kg. Pendulum awalnya berada di posisi setimbang, kemudian diberi laju awal 0,2 m/s pada arah horizontal sehingga berayun dan mengalami osilasi harmonik sederhana.',
+   parts:['Periode pendulum.','Energi total pendulum.','Nilai $\\cos\\theta$, dengan $\\theta$ perpindahan sudut maksimum pendulum.'],
+   given:{'L':'1,6 m','m':'0,4 kg','v_0':'0,2 m/s'}},
+  {id:'pr2',title:'Pegas digantung',source:'Ujian 2 Fisika Dasar 1A, Semester 1 2023/2024 Shift 1 (PR2)',
+   statement:'Sebuah pegas tergantung bebas pada langit-langit. Pada ujung pegas dikaitkan beban bermassa $m=300$ gram, akibatnya pegas mulur sejauh $d=2{,}5$ cm. Dari kesetimbangan, beban ditarik sejauh 5 cm lalu dilepaskan sehingga berosilasi harmonik dengan simpangan $y=y_m\\cos(\\omega t+\\phi_0)$ m. Awal pengamatan dilakukan saat benda berada di titik setimbang.',
+   parts:['Konstanta pegas.','Amplitudo $y_m$, frekuensi sudut $\\omega$, dan fasa awal $\\phi_0$.','Energi kinetik benda saat simpangannya setengah amplitudo.'],
+   given:{'m':'300 g','d':'2,5 cm','tarikan':'5 cm'}},
+  {id:'pr3',title:'Laju maksimum ke kiri',source:'Ujian 2 Fisika Dasar 1A, Semester 1 2023/2024 Shift 2 (PR3)',
+   statement:'Sebuah benda bermassa 0,600 kg terhubung pada pegas dengan konstanta 60,0 N/m. Sistem berosilasi dan pada $t=0$ benda memiliki laju maksimum 20,0 m/s dan sedang bergerak ke kiri. Simpangan balok memenuhi $x=x_m\\cos(\\omega t+\\phi_0)$.',
+   parts:['Tentukan frekuensi sudut dan amplitudo osilasi.','Tentukan posisi balok ketika energi kinetik tiga kali energi potensialnya.','Tentukan interval waktu minimum yang diperlukan benda untuk bergerak dari $x=0$ ke $x=1{,}00$ m.'],
+   given:{'m':'0,600 kg','k':'60,0 N/m','v_maks':'20,0 m/s'}},
+  {id:'u3-1516',title:'Peluru bersarang di balok',source:'Ujian 3 Fisika Dasar 1A, Semester 1 2015/2016',
+   statement:'Sebuah balok bermassa $M=6{,}7$ kg diam di atas permukaan licin dan terhubung dengan pegas berkonstanta $k=5800$ N/m. Sebuah peluru bermassa $m=8{,}5\\times10^{-3}$ kg dengan kecepatan 720 m/s menumbuk balok lalu bergerak bersama balok.',
+   parts:['Kecepatan peluru yang bersarang di balok sesaat setelah tumbukan.','Simpangan maksimum pegas.','Fungsi osilasi dalam ungkapan sinus (pada $t=0$, $x=0$).'],
+   given:{'M':'6,7 kg','k':'5800 N/m','m':'8,5×10⁻³ kg','v':'720 m/s'}},
+  {id:'u3-2324',title:'Balok A di atas balok B',source:'Ujian 3 Fisika Dasar 1A, Semester 1 2023/2024',
+   statement:'Dua balok bermassa $m_A=5$ kg dan $m_B=5$ kg dihubungkan dengan dua pegas pada meja horizontal licin seperti pada gambar. Konstanta pegas $k_1=250$ N/m (terhubung ke A) dan $k_2=750$ N/m (terhubung ke B). Koefisien gesek statik dan kinetik antara A dan B adalah $\\mu_s=0{,}5$ dan $\\mu_k=0{,}3$. Balok A dan B selalu bergerak bersamaan.',
+   parts:['Tentukan frekuensi sudut getaran sistem balok A dan B.','Tentukan amplitudo maksimum agar balok A dan B masih bisa bergerak bersamaan.'],
+   given:{'m_A':'5 kg','m_B':'5 kg','k_1':'250 N/m','k_2':'750 N/m','μ_s':'0,5'}}];
+/* Kunci akhir, petunjuk cadangan, dan setelan simulasi, diindeks per jenis soal */
+const KEY={
+  energi:{nums:[[64],[10,0.1],[0.0785,0.079,0.08,78.5],[80]],
+    key:['$k=64$ N/m dan $x_m=10$ cm (karena $U(0)=0{,}08$ J $=E/4$, jadi $x(0)=x_m/2$)','$T=2\\pi/80\\approx0{,}0785$ s (periode energi $\\approx T/2$)','$x(t)=0{,}10\\sin(80t+\\pi/6)$ m'],
+    hints:['Baca grafik di $t=0$: berapa $U$ dibanding $E_{maks}=0{,}32$ J? Hubungkan dengan $U=\\tfrac12kx^2$.','$U(0)=0{,}08$ J $=\\tfrac14E$, jadi $x(0)=x_m/2$ sehingga $x_m=10$ cm. Lalu $k=2E/x_m^2$. Ingat juga: periode grafik energi adalah setengah periode osilasi.','$k=2(0{,}32)/(0{,}1)^2=64$ N/m, $\\omega=\\sqrt{k/m}=80$ rad/s. Untuk fungsi sinus: $0{,}05=0{,}10\\sin\\phi$ dan kecepatan awal positif (menjauhi setimbang) sehingga $\\cos\\phi>0$, jadi $\\phi=\\pi/6$.'],
+    sim:{type:'pegas',m:0.01,k:64,xm:0.10,phi:-Math.PI/3,b:0}},
+  pendulum:{nums:[[2.54,2.5,2.51],[0.008,8],[0.9987,0.99872,0.999]],
+    key:['$T=2\\pi\\sqrt{L/g}\\approx2{,}54$ s ($g=9{,}8$ m/s²)','$E=\\tfrac12mv_0^2=8{,}0\\times10^{-3}$ J','$\\cos\\theta=1-\\dfrac{v_0^2}{2gL}\\approx0{,}9987$ ($\\theta\\approx2{,}9^\\circ$)'],
+    hints:['Periode pendulum sederhana hanya bergantung pada $L$ dan $g$. Untuk energi, perhatikan bahwa di titik setimbang semua energi berbentuk kinetik.','$E=\\tfrac12mv_0^2$. Di simpangan maksimum, semua energi menjadi potensial: $mgh$, dengan $h=L(1-\\cos\\theta)$.','$\\tfrac12mv_0^2=mgL(1-\\cos\\theta)$ sehingga $\\cos\\theta=1-v_0^2/(2gL)=1-0{,}04/31{,}36$.'],
+    sim:{type:'pendulum',L:1.6,m:0.4,theta0:2.93*Math.PI/180,g:9.8}},
+  gantung:{nums:[[117.6,118,120],[5,0.05],[19.8,19.80,20],[0.11,0.1103,0.1102,0.1125]],
+    key:['$k=mg/d=117{,}6$ N/m ($g=9{,}8$)','$y_m=5$ cm, $\\omega=\\sqrt{k/m}\\approx19{,}8$ rad/s, $\\phi_0=\\pm\\pi/2$ (tanda bergantung arah positif dan arah gerak saat $t=0$)','$K=\\tfrac34\\cdot\\tfrac12ky_m^2\\approx0{,}110$ J'],
+    hints:['Di kesetimbangan, gaya pegas menahan berat beban: $kd=mg$.','Amplitudo sama dengan tarikan awal. Pengamatan mulai di titik setimbang, jadi $y(0)=0$, artinya $\\cos\\phi_0=0$.','Di $y=y_m/2$, $U=\\tfrac14E$, sehingga $K=E-U=\\tfrac34\\cdot\\tfrac12ky_m^2$.'],
+    sim:{type:'pegas',m:0.3,k:117.6,xm:0.05,phi:Math.PI/2,b:0}},
+  laju:{nums:[[10],[2,2.0],[1,1.0],[0.0524,0.052,0.05236]],
+    key:['$\\omega=\\sqrt{60/0{,}6}=10$ rad/s, $x_m=v_m/\\omega=2{,}00$ m','$K=3U\\Rightarrow U=E/4\\Rightarrow x=\\pm x_m/2=\\pm1{,}00$ m','$\\Delta t=\\dfrac{\\arcsin(1/2)}{\\omega}=\\dfrac{\\pi}{60}\\approx0{,}0524$ s'],
+    hints:['Laju maksimum $v_m=\\omega x_m$, dan $\\omega$ bisa dihitung dari $k$ dan $m$.','Tulis $E=U+K=4U$, lalu pakai $U=\\tfrac12kx^2$ dan $E=\\tfrac12kx_m^2$.','Dari $x=0$, posisi mengikuti $x=x_m\\sin(\\omega\\Delta t)$. Cari $\\Delta t$ saat $\\sin(\\omega\\Delta t)=1/2$.'],
+    sim:{type:'pegas',m:0.6,k:60,xm:2,phi:Math.PI/2,b:0}},
+  peluru:{nums:[[0.912,0.91,0.9123],[0.031,3.1,0.0310,3.10],[29.4,29.40]],
+    key:['$V=\\dfrac{mv}{m+M}\\approx0{,}912$ m/s (tumbukan tak lenting, momentum kekal)','$\\omega=\\sqrt{k/(M+m)}\\approx29{,}4$ rad/s, $x_m=V/\\omega\\approx3{,}10$ cm','$x(t)=0{,}031\\sin(29{,}4\\,t)$ m'],
+    hints:['Tumbukan peluru bersarang: momentum kekal, energi kinetik tidak.','Setelah tumbukan, sistem $(M+m)$ berada di $x=0$ dengan laju $V$. Laju itu adalah laju maksimum osilasi: $V=\\omega x_m$.','$\\omega=\\sqrt{5800/6{,}7085}$. Karena $x(0)=0$ dan bergerak ke arah positif, $x=x_m\\sin(\\omega t)$.'],
+    sim:{type:'pegas',m:6.7085,k:5800,xm:0.031,phi:-Math.PI/2,b:0}},
+  ab:{nums:[[10],[0.098,9.8,0.1,10]],
+    key:['$\\omega=\\sqrt{\\dfrac{k_1+k_2}{m_A+m_B}}=10$ rad/s','Gaya gesek pada A: $f=(k_1-m_A\\omega^2)x$, jadi $|f|=250x\\le\\mu_s m_Ag$ memberi $x_{maks}=0{,}098$ m ($g=9{,}8$) atau 0,10 m ($g=10$)'],
+    hints:['Karena A dan B bergerak bersama, perlakukan keduanya sebagai satu benda bermassa $m_A+m_B$ yang ditarik dua pegas sejajar.','Tinjau balok A saja. Gaya pada A: pegas $-k_1x$ dan gesek statik $f$ dari B. Percepatannya harus $-\\omega^2x$.','$m_A(-\\omega^2x)=-k_1x+f$ sehingga $f=(k_1-m_A\\omega^2)x=-250x$. Syarat tidak slip: $|f|\\le\\mu_s m_Ag=24{,}5$ N.'],
+    sim:{type:'pegas',m:10,k:1000,xm:0.098,phi:0,b:0}}};
+function problemKind(p){
+  const s=`${p.id} ${p.source||''} ${p.title||''}`.toLowerCase();
+  if(/1718|2017/.test(s)||/grafik energi/.test(s)) return 'energi';
+  if(/1516|2015|peluru/.test(s)) return 'peluru';
+  if(/(u3|ujian 3).*(2324|2023)|balok a|a dan b/.test(s)) return 'ab';
+  if(/pr1|2223|2022|pendulum/.test(s)) return 'pendulum';
+  if(/pr2|shift 1|s1\b|gantung/.test(s)) return 'gantung';
+  if(/pr3|shift 2|s2\b|laju maks/.test(s)) return 'laju';
+  return null; }
+FB.quiz=[
+  {id:'cp2',tag:'Checkpoint 2',prompt:'Hubungan percepatan $a$ dan simpangan $x$ mana yang menunjukkan gerak harmonik sederhana?',options:[{id:'a',text:'$a=3x^2$'},{id:'b',text:'$a=5x$'},{id:'c',text:'$a=-4x$'},{id:'d',text:'$a=-2/x$'}],correct:'c',explanation:'GHS mensyaratkan $a=-\\omega^2x$: sebanding dengan $x$ dan berlawanan tanda. Hanya (c) yang memenuhi.'},
+  {id:'cp2b',tag:'Checkpoint 2',prompt:'Untuk pilihan yang merupakan GHS tadi ($a=-4x$), berapa frekuensi sudutnya?',options:[{id:'a',text:'4 rad/s'},{id:'b',text:'2 rad/s'},{id:'c',text:'16 rad/s'},{id:'d',text:'0,5 rad/s'}],correct:'b',explanation:'$\\omega^2=4$, jadi $\\omega=2$ rad/s.'},
+  {id:'cp3',tag:'Checkpoint 3',prompt:'Gaya $F$ pada partikel mana yang menghasilkan GHS?',options:[{id:'a',text:'$F=-5x$'},{id:'b',text:'$F=-400x^2$'},{id:'c',text:'$F=10x$'},{id:'d',text:'$F=3x^2$'}],correct:'a',explanation:'Gaya GHS berbentuk $F=-kx$: linear dalam $x$ dengan tanda minus. (b) tidak linear, (c) tandanya salah.'},
+  {id:'cp4a',tag:'Checkpoint 4',prompt:'Sebuah balok pada pegas punya $K=3$ J dan $U=2$ J saat berada di $x=+2$ cm. Berapa $K$ saat balok di $x=0$?',options:[{id:'a',text:'2 J'},{id:'b',text:'3 J'},{id:'c',text:'5 J'},{id:'d',text:'6 J'}],correct:'c',explanation:'$E=K+U=5$ J tetap. Di $x=0$, $U=0$ sehingga $K=5$ J.'},
+  {id:'cp4b',tag:'Checkpoint 4',prompt:'Masih balok yang sama. Berapa $U$ saat balok di $x=-2$ cm?',options:[{id:'a',text:'−2 J'},{id:'b',text:'2 J'},{id:'c',text:'3 J'},{id:'d',text:'5 J'}],correct:'b',explanation:'$U=\\tfrac12kx^2$ bergantung pada $x^2$, jadi sama dengan di $x=+2$ cm: 2 J.'},
+  {id:'cp4c',tag:'Checkpoint 4',prompt:'Berapa $U$ saat balok di $x=-x_m$?',options:[{id:'a',text:'0 J'},{id:'b',text:'2 J'},{id:'c',text:'3 J'},{id:'d',text:'5 J'}],correct:'d',explanation:'Di ujung lintasan $K=0$, jadi seluruh energi $E=5$ J berbentuk potensial.'},
+  {id:'cp5',tag:'Checkpoint 5',prompt:'Tiga pendulum fisis bermassa $m_0$, $2m_0$, dan $3m_0$ memiliki bentuk dan ukuran sama, digantung pada titik yang sama. Bagaimana urutan periodenya?',options:[{id:'a',text:'$m_0$ paling lama'},{id:'b',text:'$3m_0$ paling lama'},{id:'c',text:'Ketiganya sama'},{id:'d',text:'Bergantung amplitudo'}],correct:'c',explanation:'$T=2\\pi\\sqrt{I/(mgL)}$ dan $I$ sebanding dengan $m$ untuk bentuk yang sama, sehingga massa saling coret.'},
+  {id:'x1',tag:'Latihan',prompt:'Massa balok pada pegas dijadikan 4 kali semula. Periodenya menjadi…',options:[{id:'a',text:'4 kali'},{id:'b',text:'2 kali'},{id:'c',text:'Setengah'},{id:'d',text:'Tetap'}],correct:'b',explanation:'$T=2\\pi\\sqrt{m/k}\\propto\\sqrt m$, jadi $\\sqrt4=2$ kali.'},
+  {id:'x2',tag:'Latihan',prompt:'Di posisi mana energi kinetik sama dengan energi potensial pada GHS?',options:[{id:'a',text:'$x=\\pm x_m/2$'},{id:'b',text:'$x=\\pm x_m/\\sqrt2$'},{id:'c',text:'$x=0$'},{id:'d',text:'$x=\\pm x_m$'}],correct:'b',explanation:'$U=E/2$ berarti $\\tfrac12kx^2=\\tfrac14kx_m^2$, jadi $x=\\pm x_m/\\sqrt2$.'},
+  {id:'x3',tag:'Latihan',prompt:'Pada osilasi teredam kurang redam, apa yang terjadi pada frekuensi sudut dibanding tanpa redaman?',options:[{id:'a',text:'Sedikit lebih kecil'},{id:'b',text:'Sama persis'},{id:'c',text:'Lebih besar'},{id:'d',text:'Menjadi nol'}],correct:'a',explanation:'$\\omega\'=\\sqrt{k/m-(b/2m)^2}<\\sqrt{k/m}$.'}];
+FB.suggest={
+  beranda:['Apa beda frekuensi dan frekuensi sudut?','Kenapa GHS disebut harmonik?','Rangkum Modul 11 dalam lima poin'],
+  materi:['Jelaskan bagian ini dengan contoh angka','Kenapa ada tanda minus di F = −kx?','Apa arti tetapan fasa φ?'],
+  simulasi:['Jelaskan apa yang terjadi di simulasi ini','Atur simulasi agar periodenya 2 detik','Kenapa energi berkurang saat b > 0?'],
+  rumus:['Kapan pakai T = 2π√(L/g)?','Turunkan v(t) dari x(t)','Rumus mana yang paling sering keluar di ujian?'],
+  kuis:['Buatkan satu soal latihan energi GHS','Kenapa a = −4x termasuk GHS?','Jelaskan Checkpoint 5'],
+  soal:['Beri aku petunjuk tanpa membocorkan jawaban','Langkah pertama soal ini apa?','Periksa jawabanku'],
+  tutor:['Jelaskan osilasi teredam','Bandingkan pendulum dan pegas','Kenapa periode pendulum tak bergantung massa?']};
+
+/* ==================== Adaptor OsilasiTutor ==================== */
+const stubErr=()=>Promise.reject({code:'offline',message:'Tutor AI tidak tersedia.'});
+if(!window.OsilasiTutor){
+  /* Stub: hanya aktif bila tutor.js gagal dimuat atau belum ada */
+  window.OsilasiTutor={version:'stub',__stub:true,ready:()=>Promise.resolve(false),modes:FB.modes,
+    ask:stubErr,hint:stubErr,checkAnswer:stubErr,generateQuiz:stubErr,
+    suggestions:sec=>FB.suggest[String(sec||'').split(/[:/]/)[0]]||FB.suggest.tutor,
+    problems:FB.problems,formulas:FB.formulas,compute:()=>({})};
+}
+const T=window.OsilasiTutor;
+const has=fn=>T&&typeof T[fn]==='function';
+const MODES=(Array.isArray(T.modes)&&T.modes.length?T.modes:FB.modes).filter(m=>m&&m.id);
+const FORMULAS=(Array.isArray(T.formulas)&&T.formulas.length?T.formulas:FB.formulas).filter(f=>f&&f.latex);
+function normProblem(p){
+  const parts=(Array.isArray(p.parts)?p.parts:[]).map((x,i)=>typeof x==='string'?{label:String.fromCharCode(97+i),text:x}:{label:x.label||x.id||String.fromCharCode(97+i),text:x.text||x.prompt||x.question||x.statement||''});
+  return {id:String(p.id),title:p.title||('Soal '+p.id),source:p.source||'',statement:p.statement||p.text||'',parts,given:p.given&&typeof p.given==='object'?p.given:{},kind:problemKind(p)}; }
+const isCheckpoint=p=>/^cp|checkpoint/i.test(`${p.id} ${p.source||''}`);
+let PROBLEMS=(Array.isArray(T.problems)?T.problems:[]).filter(p=>p&&p.id&&!isCheckpoint(p)).map(normProblem);
+if(PROBLEMS.length<1) PROBLEMS=FB.problems.map(normProblem);
+const AI={state:'checking',cooldownUntil:0};
+function errInfo(e){ const code=(e&&(e.code||e.name))||'';
+  if(code==='AbortError'||code==='aborted'||code==='abort') return {kind:'abort',msg:'Jawaban dihentikan.'};
+  if(code==='not_granted') return {kind:'blocked',msg:'Tutor AI butuh izin "Tanya Claude". Izin belum diberikan, jadi untuk sementara aku menjawab dari daftar rumus. Tekan "Coba lagi" di bawah bila sudah siap memberi izin.'};
+  if(code==='rate_limited') return {kind:'rate',msg:'Permintaan ke tutor sedang terlalu banyak. Tunggu sekitar 30 detik, lalu kirim lagi.'};
+  if(code==='offline'||code==='unavailable') return {kind:'offline',msg:'Tutor AI belum tersedia di halaman ini. Aku menjawab dari daftar rumus modul.'};
+  return {kind:'error',msg:'Tutor gagal menjawab'+(e&&e.message?': '+e.message:'')+'. Coba kirim ulang sebentar lagi.'}; }
+const STATUS_TXT={ready:'AI aktif',checking:'Menghubungkan…',offline:'AI nonaktif: jawaban dari materi modul',blocked:'Izin "Tanya Claude" belum diberikan',rate:'Jeda sebentar, permintaan terlalu banyak',expired:'Sesi Claude berakhir: mode offline'};
+function setAIState(s,extra){ AI.state=s; if(s==='rate') AI.cooldownUntil=Date.now()+((extra&&extra.retryAfterMs)||20000);
+  const st=$('#aiStatus'); if(st){ st.dataset.s=s==='rate'||s==='expired'?'offline':s; st.lastElementChild.textContent=STATUS_TXT[s]||s; }
+  document.dispatchEvent(new CustomEvent('ai:state')); }
+/* Status dari tutor.js (di luar kontrak minimum, dipakai bila ada) */
+function mapTutorStatus(d){ const s=d&&d.status; if(!s) return;
+  const m={ready:'ready',waiting:'checking',unknown:'checking',unavailable:'offline',not_granted:'blocked',disabled:'offline',sampling_disabled:'offline',rate_limited:'rate',session_expired:'expired'}[s];
+  if(m) setAIState(m,d); if(m==='rate'){ setTimeout(()=>{ if(AI.state==='rate'&&Date.now()>=AI.cooldownUntil) setAIState('ready'); },Math.max(1000,AI.cooldownUntil-Date.now()+100)); } }
+window.addEventListener('tutor:status',e=>mapTutorStatus(e.detail));
+function noteResultCode(res){ if(!res||!res.code) return; const c=res.code;
+  if(c==='not_granted') setAIState('blocked'); else if(c==='rate_limited') setAIState('rate',{retryAfterMs:(has('status')&&T.status().retryAfterMs)||20000}); else if(c==='session_expired') setAIState('expired'); else if(c==='unavailable'||c==='sampling_disabled') setAIState('offline'); }
+const coolingDown=()=>AI.state==='rate'&&Date.now()<AI.cooldownUntil;
+async function checkReady(){ setAIState('checking');
+  if(T.__stub||!has('ready')){ setAIState('offline'); return; }
+  try{ const ok=await Promise.race([T.ready(),new Promise(r=>setTimeout(()=>r(false),12000))]);
+    if(has('status')) mapTutorStatus(T.status()); if(AI.state==='checking') setAIState(ok?'ready':'offline'); else if(ok&&AI.state!=='blocked') setAIState('ready'); }
+  catch(e){ setAIState('offline'); } }
+const onTextAdapter=cb=>arg=>{ const t=typeof arg==='string'?arg:(arg&&typeof arg.text==='string'?arg.text:null); if(t!=null) cb(t); };
+
+/* ==================== Warna untuk canvas ==================== */
+const COL={};
+function readColors(){ const cs=getComputedStyle(document.documentElement);
+  ['bg','surface','surface-2','surface-3','line','line-strong','ink','ink-2','ink-3','accent','accent-soft','c-x','c-v','c-a','c-U','c-K','c-u1','c-u2','c-u3','grid','ok','bad']
+  .forEach(k=>COL[k]=cs.getPropertyValue('--'+k).trim()); }
+readColors();
+
+/* ==================== Tema ==================== */
+function applyThemeUI(){ const dark=document.documentElement.getAttribute('data-theme')==='dark'; const b=$('#themeBtn');
+  b.innerHTML=icon(dark?'sun':'moon','icon'); b.setAttribute('aria-label',dark?'Ganti ke mode terang':'Ganti ke mode gelap');
+  const meta=$('meta[name="theme-color"]'); if(meta) meta.content=dark?'#0c0d10':'#f6f5f1'; readColors(); drawFigures(); Sim.redraw(); }
+$('#themeBtn').addEventListener('click',()=>{ const dark=document.documentElement.getAttribute('data-theme')!=='dark';
+  document.documentElement.setAttribute('data-theme',dark?'dark':'light'); try{ localStorage.setItem('osilasi-theme',dark?'dark':'light'); }catch(e){} applyThemeUI(); });
+
+/* ==================== Progres ==================== */
+const BAB=$$('#chapters .chapter').map(a=>({id:a.dataset.bab,title:a.dataset.title,el:a}));
+const Progress={
+  get(){ return {read:store.get('read',{}),sims:store.get('sims',{}),quiz:store.get('quizDone',false),soal:store.get('soal',{})}; },
+  mark(kind,id){ if(kind==='quiz'){ if(store.get('quizDone')) return; store.set('quizDone',true); } else { const o=store.get(kind,{}); if(o[id]) return; o[id]=true; store.set(kind,o);} this.render(); },
+  unmark(kind,id){ const o=store.get(kind,{}); delete o[id]; store.set(kind,o); this.render(); },
+  render(){ const p=this.get(); const nb=BAB.filter(b=>p.read[b.id]).length, ns=['pegas','pendulum','teredam'].filter(s=>p.sims[s]).length, nq=p.quiz?1:0, np=PROBLEMS.filter(q=>p.soal[q.id]).length;
+    const total=BAB.length+3+1+PROBLEMS.length, done=nb+ns+nq+np, pct=Math.round(done/total*100);
+    $('#progressPct').textContent=pct+'%'; $('#ringFg').setAttribute('stroke-dashoffset',(94.25*(1-pct/100)).toFixed(2));
+    $('#progressPill').setAttribute('aria-label',`Progres belajar ${pct} persen`); $('#progressBar').style.width=pct+'%';
+    const it=(ok,txt)=>`<span class="${ok?'done':''}">${ok?icon('check'):'<svg class="icon sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/></svg>'}${txt}</span>`;
+    $('#progressList').innerHTML=it(nb===BAB.length,`Materi ${nb}/${BAB.length}`)+it(ns===3,`Simulasi ${ns}/3`)+it(nq,'Kuis checkpoint')+it(np===PROBLEMS.length,`Soal ${np}/${PROBLEMS.length}`);
+    const nextB=BAB.find(b=>!p.read[b.id]);
+    $('#progressNext').textContent=pct===100?'Semua bagian sudah kamu selesaikan.':nextB?`Berikutnya: bab ${BAB.indexOf(nextB)+1}, ${nextB.title}.`:ns<3?'Berikutnya: coba ketiga simulasi.':!nq?'Berikutnya: kerjakan kuis checkpoint.':'Berikutnya: kerjakan soal ujian.';
+    if(nextB&&nb>0){ const c=$('#ctaStart'); c.href='#materi/'+nextB.id; c.innerHTML=`Lanjut ke bab ${BAB.indexOf(nextB)+1} ${icon('arrow')}`; }
+    $$('#toc a').forEach(a=>a.classList.toggle('is-done',!!p.read[a.dataset.bab]));
+    $$('.chapter-foot [data-done]').forEach(b=>{ const on=!!p.read[b.dataset.done]; b.setAttribute('aria-pressed',on); b.classList.toggle('is-on',on); b.innerHTML=on?icon('check')+'Sudah dibaca':'Tandai selesai'; });
+    $$('#soalIndex a').forEach(a=>a.classList.toggle('is-done',!!p.soal[a.dataset.pid])); } };
+$('#resetProgress').addEventListener('click',async()=>{ if(await askDialog('Hapus progres?','Tanda bab, simulasi, skor kuis, dan jawaban soal di peramban ini akan dihapus. Rumus yang disorot tetap tersimpan.','Hapus progres')){
+  ['read','sims','quizDone','soal','answers','cpAnswers'].forEach(k=>delete store.data[k]); store.save(); Progress.render(); Quiz.resetCP(); toast('Progres dihapus.'); } });
+
+/* ==================== Router hash ==================== */
+const VIEWS=['beranda','materi','simulasi','rumus','kuis','soal','tutor'];
+const Ctx={view:'beranda',bab:'ghs',problem:null,last:'beranda'};
+function sectionString(){ const v=Ctx.view==='tutor'?Ctx.last:Ctx.view;
+  if(v==='materi') return 'materi:'+Ctx.bab; if(v==='simulasi') return 'simulasi:'+Sim.active; if(v==='soal') return Ctx.problem?'soal:'+Ctx.problem:'soal'; return v; }
+function ctxLabel(){ const s=sectionString(); const [v,x]=s.split(':');
+  if(v==='materi'){ const b=BAB.find(b=>b.id===x); return 'Materi: '+(b?b.title:x); }
+  if(v==='simulasi'){ const p=Sim.current(); return 'Simulasi '+x+(p.type==='pegas'?` (m = ${sig(p.m)} kg, k = ${sig(p.k)} N/m)`:p.type==='pendulum'?` (L = ${sig(p.L)} m, θ₀ = ${sig(p.theta0Deg)}°)`:''); }
+  if(v==='soal'){ const p=PROBLEMS.find(p=>p.id===x); return p?'Soal: '+p.title:'Soal ujian'; }
+  return {beranda:'Beranda',rumus:'Kartu rumus',kuis:'Kuis',tutor:'Tutor'}[v]||v; }
+function updateState(){ window.OsilasiState={section:sectionString(),sim:Sim.current()}; const l=$('#ctxLabel'); if(l) l.textContent=ctxLabel(); Chat.renderSuggestions(); }
+function route(fromUser){
+  const raw=decodeURIComponent(location.hash.replace(/^#/,'')); let [v,sub]=raw.split('/');
+  if(v&&v.startsWith('bab-')){ sub=v.slice(4); v='materi'; }
+  if(!VIEWS.includes(v)) v='beranda';
+  const changed=v!==Ctx.view||!document.querySelector('.view.is-active');
+  if(Ctx.view!=='tutor') Ctx.last=Ctx.view;
+  Ctx.view=v;
+  $$('.view').forEach(s=>s.classList.toggle('is-active',s.dataset.view===v));
+  $$('.nav a').forEach(a=>{ if(a.getAttribute('href')==='#'+v){ a.setAttribute('aria-current','page'); const nav=a.parentElement; if(nav.scrollWidth>nav.clientWidth){ const l=a.offsetLeft-nav.offsetLeft; if(l<nav.scrollLeft||l+a.offsetWidth>nav.scrollLeft+nav.clientWidth) nav.scrollLeft=l-16; } } else a.removeAttribute('aria-current'); });
+  Chat.mount(v==='tutor'?'page':'drawer');
+  if(v==='simulasi'&&sub&&Sim.types.includes(sub)) Sim.select(sub,false);
+  if(v==='materi'&&sub){ const el=$('#bab-'+sub); if(el){ Ctx.bab=sub; requestAnimationFrame(()=>el.scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})); } }
+  else if(v==='soal'&&sub){ const el=$('#soal-'+CSS.escape(sub)); if(el){ Ctx.problem=sub; requestAnimationFrame(()=>el.scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})); } }
+  else if(changed) window.scrollTo(0,0);
+  if(changed&&fromUser){ const hd=$(`.view[data-view="${v}"] h1`); if(hd){ hd.setAttribute('tabindex','-1'); hd.focus({preventScroll:true}); } }
+  Sim.onView(v==='simulasi'); Hero.onView(v==='beranda');
+  if(v==='rumus'||v==='kuis') renderFormulaMath();
+  updateState(); }
+window.addEventListener('hashchange',()=>route(true));
+function go(hash){ if(location.hash===hash) route(true); else location.hash=hash; }
+
+/* ==================== Gambar SVG materi ==================== */
+const svgPath=(fn,x0,x1,n=240)=>{ let d=''; for(let i=0;i<=n;i++){ const t=x0+(x1-x0)*i/n; const [px,py]=fn(t); d+=(i?'L':'M')+px.toFixed(1)+' '+py.toFixed(1); } return d; };
+const T_=(x,y,s,attr='')=>`<text x="${x}" y="${y}" ${attr} style="font:500 13px var(--f-body);fill:var(--ink-3)">${s}</text>`;
+function springPath(x0,x1,y,coils=10,amp=9){ const L=x1-x0, lead=Math.min(14,L*.12); let d=`M${x0} ${y}L${x0+lead} ${y}`; const seg=(L-2*lead)/(coils*2);
+  for(let i=0;i<coils*2;i++){ d+=`L${(x0+lead+seg*(i+.5)).toFixed(1)} ${y+(i%2?amp:-amp)}`; } return d+`L${x1-lead} ${y}L${x1} ${y}`; }
+function figPhase(){ const g=$('#figPhaseG'); if(!g) return; const phi=+$('#figPhi').value*Math.PI/180, A=+$('#figXm').value;
+  $('#figPhiOut').textContent=$('#figPhi').value+'°'; $('#figXmOut').textContent=nf(A,2);
+  const X=t=>50+t*285, Y=v=>110-v*85; let s='';
+  for(let k=0;k<=4;k++){ s+=`<line x1="${X(k/2)}" y1="20" x2="${X(k/2)}" y2="200" stroke="var(--grid)"/>`; s+=T_(X(k/2)-10,216,['0','T/2','T','3T/2','2T'][k]); }
+  s+=`<line x1="50" y1="110" x2="625" y2="110" stroke="var(--line-strong)"/><line x1="50" y1="20" x2="50" y2="200" stroke="var(--line-strong)"/>`;
+  s+=`<line x1="50" y1="${Y(A)}" x2="625" y2="${Y(A)}" stroke="var(--line-strong)" stroke-dasharray="3 4"/><line x1="50" y1="${Y(-A)}" x2="625" y2="${Y(-A)}" stroke="var(--line-strong)" stroke-dasharray="3 4"/>`;
+  s+=T_(12,Y(A)+4,'+x<tspan dy="3" font-size="10">m</tspan>')+T_(14,Y(-A)+4,'−x<tspan dy="3" font-size="10">m</tspan>')+T_(30,114,'0');
+  s+=`<path d="${svgPath(t=>[X(t),Y(A*Math.cos(2*Math.PI*t))],0,2)}" fill="none" stroke="var(--ink-3)" stroke-width="1.5" stroke-dasharray="4 5" opacity=".7"/>`;
+  s+=`<path d="${svgPath(t=>[X(t),Y(A*Math.cos(2*Math.PI*t+phi))],0,2)}" fill="none" stroke="var(--c-x)" stroke-width="2.5"/>`;
+  s+=`<circle cx="${X(0)}" cy="${Y(A*Math.cos(phi))}" r="6" fill="var(--c-x)" stroke="var(--surface)" stroke-width="2"/>`;
+  s+=T_(470,36,'— φ = 0 (acuan)','style="font:500 12px var(--f-body);fill:var(--ink-3)"'); g.innerHTML=s; }
+function figXva(){ const g=$('#figXvaG'); if(!g) return; const tt=+$('#figT').value; $('#figTOut').textContent=nf(tt,2);
+  const X=t=>60+t*280; let s='';
+  const rows=[['x','var(--c-x)',t=>Math.cos(2*Math.PI*t)],['v','var(--c-v)',t=>-Math.sin(2*Math.PI*t)],['a','var(--c-a)',t=>-Math.cos(2*Math.PI*t)]];
+  rows.forEach((r,i)=>{ const cy=55+i*105, Y=v=>cy-v*38;
+    s+=`<line x1="60" y1="${cy}" x2="625" y2="${cy}" stroke="var(--line-strong)"/>`;
+    for(let k=1;k<=4;k++) s+=`<line x1="${X(k/2)}" y1="${cy-44}" x2="${X(k/2)}" y2="${cy+44}" stroke="var(--grid)"/>`;
+    s+=`<text x="20" y="${cy+5}" style="font:600 16px var(--f-display);font-style:italic;fill:${r[1]}">${r[0]}</text>`;
+    s+=`<path d="${svgPath(t=>[X(t),Y(r[2](t))],0,2)}" fill="none" stroke="${r[1]}" stroke-width="2.4"/>`;
+    s+=`<circle cx="${X(tt)}" cy="${Y(r[2](tt))}" r="5.5" fill="${r[1]}" stroke="var(--surface)" stroke-width="2"/>`; });
+  s+=`<line x1="${X(tt)}" y1="8" x2="${X(tt)}" y2="318" stroke="var(--ink-2)" stroke-width="1.2" stroke-dasharray="4 4"/>`;
+  ['T/2','T','3T/2','2T'].forEach((l,k)=>s+=T_(X((k+1)/2)-10,326,l));
+  g.innerHTML=s; const th=2*Math.PI*tt;
+  const r2=v=>{ const x=Math.round(v*100)/100; return nf(x===0?0:x,2); };
+  $('#figXvaRead').textContent=`x = ${r2(Math.cos(th))} xₘ · v = ${r2(-Math.sin(th))} vₘ · a = ${r2(-Math.cos(th))} aₘ`; }
+function figPegas(){ const g=$('#figPegasG'); if(!g) return; let s=''; const eq=330, A=110;
+  [-1,0,1].forEach((d,i)=>{ const y=50+i*78, bx=eq+d*A;
+    s+=`<rect x="20" y="${y-28}" width="10" height="44" fill="var(--surface-3)" stroke="var(--line-strong)"/><line x1="30" y1="${y+16}" x2="620" y2="${y+16}" stroke="var(--line-strong)"/>`;
+    s+=`<path d="${springPath(30,bx-26,y-4,10,8)}" fill="none" stroke="var(--ink-2)" stroke-width="1.8"/>`;
+    s+=`<rect x="${bx-26}" y="${y-26}" width="52" height="42" rx="5" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.5"/><text x="${bx}" y="${y}" text-anchor="middle" style="font:italic 600 15px var(--f-display);fill:var(--ink)">m</text>`;
+    if(d){ s+=sArrow(bx,y-36,bx-d*70,y-36,'var(--c-a)',2.4);
+      s+=`<text x="${bx-d*40}" y="${y-42}" text-anchor="middle" style="font:600 13px var(--f-body);fill:var(--c-a)">F = −kx</text>`; }
+    s+=`<text x="636" y="${y+4}" text-anchor="end" style="font:500 13px var(--f-mono);fill:var(--ink-3)">${['x = −xₘ','x = 0','x = +xₘ'][i]}</text>`; });
+  s+=`<line x1="${eq}" y1="10" x2="${eq}" y2="240" stroke="var(--accent)" stroke-dasharray="4 4"/>`+T_(eq+6,246,'setimbang','style="font:500 12px var(--f-body);fill:var(--accent)"');
+  g.innerHTML=s; }
+function figEnergi(){ const g=$('#figEnergiG'); if(!g) return; const xr=+$('#figEx').value; $('#figExOut').textContent=nf(xr,2);
+  const X=x=>320+x*240, Y=e=>240-e*200; let s='';
+  s+=`<line x1="60" y1="240" x2="600" y2="240" stroke="var(--line-strong)"/><line x1="320" y1="20" x2="320" y2="240" stroke="var(--grid)"/>`;
+  s+=`<line x1="60" y1="${Y(1)}" x2="600" y2="${Y(1)}" stroke="var(--ink-2)" stroke-width="1.6" stroke-dasharray="6 4"/>`+T_(604,Y(1)+4,'E');
+  s+=`<path d="${svgPath(x=>[X(x),Y(x*x)],-1.05,1.05)}" fill="none" stroke="var(--c-U)" stroke-width="2.6"/>`;
+  const U=xr*xr; s+=`<line x1="${X(xr)}" y1="${Y(0)}" x2="${X(xr)}" y2="${Y(U)}" stroke="var(--c-U)" stroke-width="10" opacity=".85"/>`;
+  s+=`<line x1="${X(xr)}" y1="${Y(U)}" x2="${X(xr)}" y2="${Y(1)}" stroke="var(--c-K)" stroke-width="10" opacity=".85"/>`;
+  s+=`<circle cx="${X(xr)}" cy="${Y(U)}" r="5" fill="var(--surface)" stroke="var(--c-U)" stroke-width="2.5"/>`;
+  s+=`<text x="${X(xr)+12}" y="${Y(U/2)+4}" style="font:700 13px var(--f-mono);fill:var(--c-U)">U</text><text x="${X(xr)+12}" y="${Y((1+U)/2)+4}" style="font:700 13px var(--f-mono);fill:var(--c-K)">K</text>`;
+  s+=T_(X(-1)-14,262,'−xₘ')+T_(X(0)-4,262,'0')+T_(X(1)-10,262,'+xₘ')+T_(170,60,'U(x) = ½kx²','style="font:600 13px var(--f-mono);fill:var(--c-U)"');
+  g.innerHTML=s; $('#figEnergiRead').textContent=`U = ${nf(U*100,0)}% E · K = ${nf((1-U)*100,0)}% E`; }
+function figPend(){ const g=$('#figPendG'); if(!g) return; const th=28*Math.PI/180, px=260, py=30, L=210, bx=px+L*Math.sin(th), by=py+L*Math.cos(th); let s='';
+  s+=`<rect x="${px-70}" y="${py-14}" width="140" height="14" fill="var(--surface-3)" stroke="var(--line-strong)"/>`;
+  s+=`<line x1="${px}" y1="${py}" x2="${px}" y2="${py+L+30}" stroke="var(--ink-3)" stroke-dasharray="4 4"/>`;
+  s+=`<path d="M${px-L*Math.sin(th)} ${py+L*Math.cos(th)} A ${L} ${L} 0 0 0 ${bx} ${by}" fill="none" stroke="var(--line-strong)" stroke-dasharray="3 4"/>`;
+  s+=`<line x1="${px}" y1="${py}" x2="${bx}" y2="${by}" stroke="var(--ink)" stroke-width="2"/>`;
+  s+=`<path d="M${px} ${py+52} A 52 52 0 0 0 ${px+52*Math.sin(th)} ${py+52*Math.cos(th)}" fill="none" stroke="var(--accent)" stroke-width="1.8"/>`;
+  s+=`<text x="${px+10}" y="${py+76}" style="font:italic 600 16px var(--f-display);fill:var(--accent)">θ</text>`;
+  s+=`<text x="${(px+bx)/2+10}" y="${(py+by)/2}" style="font:italic 600 16px var(--f-display);fill:var(--ink)">L</text>`;
+  const mg=90; s+=sArrow(bx,by,bx,by+mg,'var(--ink-2)',2.2);
+  s+=`<text x="${bx+8}" y="${by+mg+4}" style="font:600 14px var(--f-body);fill:var(--ink-2)">mg</text>`;
+  const tx=-Math.cos(th), ty=Math.sin(th), ms=mg*Math.sin(th);
+  s+=sArrow(bx,by,bx+tx*ms,by+ty*ms,'var(--c-a)',2.4);
+  s+=`<text x="${bx+tx*ms-80}" y="${by+ty*ms+20}" style="font:600 14px var(--f-body);fill:var(--c-a)">mg sin θ</text>`;
+  const mc=mg*Math.cos(th); s+=sArrow(bx,by,bx+Math.sin(th)*mc,by+Math.cos(th)*mc,'var(--ink-3)',1.6);
+  s+=`<text x="${bx+Math.sin(th)*mc+6}" y="${by+Math.cos(th)*mc+14}" style="font:500 13px var(--f-body);fill:var(--ink-3)">mg cos θ</text>`;
+  s+=`<circle cx="${bx}" cy="${by}" r="15" fill="var(--c-x)" stroke="var(--surface)" stroke-width="2"/>`;
+  s+=`<g transform="translate(450 70)"><text style="font:500 13px var(--f-body);fill:var(--ink-2)"><tspan x="0" dy="0">Torsi terhadap poros:</tspan><tspan x="0" dy="22" style="font-family:var(--f-mono)">τ = −L · mg sin θ</tspan><tspan x="0" dy="30">Sudut kecil:</tspan><tspan x="0" dy="22" style="font-family:var(--f-mono)">sin θ ≈ θ</tspan></text></g>`;
+  g.innerHTML=s; }
+function figTeredam(){ const g=$('#figTeredamG'); if(!g) return; const z=+$('#figZeta').value; $('#figZetaOut').textContent=nf(z,2);
+  const w0=2*Math.PI, X=t=>40+t*97, Y=v=>120-v*95, wd=w0*Math.sqrt(1-z*z); let s='';
+  s+=`<line x1="40" y1="120" x2="625" y2="120" stroke="var(--line-strong)"/><line x1="40" y1="20" x2="40" y2="220" stroke="var(--line-strong)"/>`;
+  s+=`<path d="${svgPath(t=>[X(t),Y(Math.exp(-z*w0*t))],0,6)}" fill="none" stroke="var(--ink-3)" stroke-dasharray="5 4"/>`;
+  s+=`<path d="${svgPath(t=>[X(t),Y(-Math.exp(-z*w0*t))],0,6)}" fill="none" stroke="var(--ink-3)" stroke-dasharray="5 4"/>`;
+  s+=`<path d="${svgPath(t=>[X(t),Y(Math.exp(-z*w0*t)*Math.cos(wd*t))],0,6,400)}" fill="none" stroke="var(--c-x)" stroke-width="2.4"/>`;
+  s+=T_(560,140,'t')+T_(14,30,'x'); g.innerHTML=s; }
+function drawFigures(){ figPhase(); figXva(); figPegas(); figEnergi(); figPend(); figTeredam(); }
+['figPhi','figXm'].forEach(id=>$('#'+id).addEventListener('input',figPhase));
+$('#figT').addEventListener('input',figXva); $('#figEx').addEventListener('input',figEnergi); $('#figZeta').addEventListener('input',figTeredam);
+function calc(){ const m=parseFloat($('#calcM').value), k=parseFloat($('#calcK').value);
+  if(!(m>0&&k>0)){ $('#calcOut').innerHTML='<span>Isi m dan k dengan angka positif.</span>'; return; }
+  const w=Math.sqrt(k/m); $('#calcOut').innerHTML=`<span>ω = <b>${sig(w,4)}</b> rad/s</span><span>f = <b>${sig(w/2/Math.PI,4)}</b> Hz</span><span>T = <b>${sig(2*Math.PI/w,4)}</b> s</span>`; }
+$('#calcM').addEventListener('input',calc); $('#calcK').addEventListener('input',calc);
+
+/* Daftar isi, footer bab, dan pelacak bab aktif */
+const SIM_FOR={ghs:'pegas',kecepatan:'pegas',pegas:'pegas',energi:'pegas',pendulum:'pendulum',teredam:'teredam'};
+BAB.forEach((b,i)=>{
+  $('#toc').append(h('a',{href:'#materi/'+b.id,'data-bab':b.id,html:`<span class="n">${i+1}</span><span>${esc(b.title)}</span>`}));
+  const f=$('.chapter-foot',b.el);
+  f.append(h('a',{class:'btn sm',href:'#simulasi/'+SIM_FOR[b.id],html:icon('flask')+'Coba di simulasi'}),
+    h('button',{class:'btn sm',type:'button',html:icon('spark')+'Tanya bot soal bab ini',onclick:()=>Chat.open({section:'materi:'+b.id,send:`Jelaskan bab "${b.title}" dari Modul 11 secara singkat, lalu beri satu contoh soal hitungan beserta penyelesaiannya.`})}),
+    h('span',{class:'spacer'}),
+    h('button',{class:'btn sm','data-done':b.id,type:'button','aria-pressed':'false',onclick:()=>{ const p=Progress.get(); if(p.read[b.id]) Progress.unmark('read',b.id); else { Progress.mark('read',b.id); toast(`Bab ${i+1} ditandai selesai.`); } }}));
+});
+if('IntersectionObserver' in window){ const io=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ Ctx.bab=e.target.dataset.bab; $$('#toc a').forEach(a=>a.classList.toggle('is-current',a.dataset.bab===Ctx.bab)); if(Ctx.view==='materi') updateState(); } }); },{rootMargin:'-30% 0px -60% 0px'});
+  BAB.forEach(b=>io.observe(b.el)); }
+
+/* ==================== Simulasi ==================== */
+function fitCanvas(c){ const r=c.getBoundingClientRect(); const d=Math.min(window.devicePixelRatio||1,2);
+  const w=Math.max(1,Math.round(r.width*d)), hh=Math.max(1,Math.round(r.height*d)); if(c.width!==w||c.height!==hh){ c.width=w; c.height=hh; }
+  const ctx=c.getContext('2d'); ctx.setTransform(d,0,0,d,0,0); ctx.clearRect(0,0,r.width,r.height); return {ctx,W:r.width,H:r.height}; }
+function cArrow(ctx,x1,y1,x2,y2,color,w=2.4){ const L=Math.hypot(x2-x1,y2-y1); if(L<3) return; const a=Math.atan2(y2-y1,x2-x1), hl=Math.min(10,L*.5);
+  ctx.strokeStyle=ctx.fillStyle=color; ctx.lineWidth=w; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-Math.cos(a)*hl*.8,y2-Math.sin(a)*hl*.8); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-hl*Math.cos(a-.42),y2-hl*Math.sin(a-.42)); ctx.lineTo(x2-hl*Math.cos(a+.42),y2-hl*Math.sin(a+.42)); ctx.closePath(); ctx.fill(); }
+function cSpring(ctx,x0,x1,y,coils,amp,color,w=1.8){ const L=x1-x0, lead=Math.min(12,Math.abs(L)*.12), seg=(L-2*lead)/(coils*2);
+  ctx.strokeStyle=color; ctx.lineWidth=w; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x0+lead,y);
+  for(let i=0;i<coils*2;i++) ctx.lineTo(x0+lead+seg*(i+.5),y+(i%2?amp:-amp)); ctx.lineTo(x1-lead,y); ctx.lineTo(x1,y); ctx.stroke(); }
+function cWall(ctx,x,y0,y1){ ctx.fillStyle=COL['surface-3']; ctx.fillRect(x-10,y0,10,y1-y0); ctx.strokeStyle=COL['line-strong']; ctx.lineWidth=1; ctx.strokeRect(x-10+.5,y0+.5,9,y1-y0-1);
+  ctx.beginPath(); for(let y=y0+6;y<y1;y+=9){ ctx.moveTo(x-10,y+6); ctx.lineTo(x-2,y-2); } ctx.stroke(); }
+function rrect(ctx,x,y,w,hh,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+hh,r); ctx.arcTo(x+w,y+hh,x,y+hh,r); ctx.arcTo(x,y+hh,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function cText(ctx,s,x,y,color,font='500 12px "Instrument Sans", sans-serif',align='left'){ ctx.fillStyle=color; ctx.font=font; ctx.textAlign=align; ctx.textBaseline='middle'; ctx.fillText(s,x,y); }
+const MONO='500 12px "JetBrains Mono", monospace';
+const fmtLen=m=>Math.abs(m)<1?nf(m*100,1)+' cm':nf(m,2)+' m';
+function rk4(s,f,h){ const [x,v]=s; const k1=f(x,v), k2=f(x+h/2*v,v+h/2*k1), v2=v+h/2*k1, k3=f(x+h/2*v2,v+h/2*k2), v3=v+h/2*k2, k4=f(x+h*v3,v+h*k3), v4=v+h*k3;
+  return [x+h/6*(v+2*v2+2*v3+v4), v+h/6*(k1+2*k2+2*k3+k4)]; }
+function agm(a,b){ for(let i=0;i<30;i++){ const a2=(a+b)/2, b2=Math.sqrt(a*b); a=a2; b=b2; if(Math.abs(a-b)<1e-14) break; } return a; }
+
+/* Slider dengan input angka */
+let sliderSeq=0;
+function makeSlider(host,spec,get,set){
+  const id='sl'+(++sliderSeq); const lg=!!spec.log; const toR=v=>lg?1000*Math.log(v/spec.min)/Math.log(spec.max/spec.min):v; const fromR=r=>lg?spec.min*Math.pow(spec.max/spec.min,r/1000):r;
+  const range=h('input',{type:'range',id,min:lg?0:spec.min,max:lg?1000:spec.max,step:lg?1:spec.step,'aria-label':spec.aria||spec.plain});
+  const num=h('input',{type:'number',min:spec.min,max:spec.max,step:'any',inputmode:'decimal','aria-label':(spec.aria||spec.plain)+' (angka)'});
+  const wrap=h('div',{class:'slider'},h('label',{for:id,html:spec.label}),h('span',{class:'num'},num,h('span',{text:spec.unit||''})),range);
+  host.append(wrap);
+  const paint=()=>{ const p=(range.value-range.min)/(range.max-range.min)*100; range.style.setProperty('--p',p+'%'); };
+  const update=()=>{ const v=get(); range.value=toR(v); num.value=+v.toFixed(spec.digits??3); paint(); };
+  range.addEventListener('input',()=>{ let v=fromR(+range.value); if(lg) v=+v.toPrecision(3); set(v); num.value=+v.toFixed(spec.digits??3); paint(); });
+  num.addEventListener('change',()=>{ let v=parseFloat(String(num.value).replace(',','.')); if(!isFinite(v)){ update(); return; } v=clamp(v,spec.min,spec.max); set(v); update(); });
+  update(); return {update}; }
+
+const S={};
+/* ---- (a) Pegas-balok ---- */
+S.pegas={ P:{m:1,k:20,xm:0.15,phiDeg:0,b:0}, t:0,x:0,v:0,hist:[],run:0,
+  w0(){ return Math.sqrt(this.P.k/this.P.m); }, T0(){ return 2*Math.PI/this.w0(); },
+  win(){ return clamp(3*this.T0(),0.05,20); },
+  acc(x,v){ const P=this.P; return -(P.k*x+P.b*v)/P.m; },
+  reset(){ const P=this.P, w=this.w0(), ph=P.phiDeg*Math.PI/180; this.t=0; this.x=P.xm*Math.cos(ph); this.v=-w*P.xm*Math.sin(ph); this.hist=[]; this.lastS=-1; this.E0=.5*P.k*P.xm*P.xm; this.sample(); },
+  sample(){ this.hist.push([this.t,this.x,this.v,this.acc(this.x,this.v)]); this.lastS=this.t; const lim=this.t-this.win()*1.05; while(this.hist.length>2&&this.hist[1][0]<lim) this.hist.shift(); },
+  step(dt){ const hmax=Math.min(this.T0()/400,0.002); const n=Math.min(4000,Math.ceil(dt/hmax)); const hh=dt/n, f=(x,v)=>this.acc(x,v), sd=this.win()/400;
+    for(let i=0;i<n;i++){ [this.x,this.v]=rk4([this.x,this.v],f,hh); this.t+=hh; if(this.t-this.lastS>=sd) this.sample(); } },
+  current(){ const P=this.P; return {type:'pegas',m:P.m,k:P.k,xm:P.xm,phi:+(P.phiDeg*Math.PI/180).toFixed(4),phiDeg:P.phiDeg,b:P.b}; },
+  draw(){ const P=this.P; let {ctx,W,H}=fitCanvas($('#pgStage'));
+    const floor=H*0.66, cx=Math.round(W*0.56), half=Math.min(W*0.33,W-cx-70), s=half/P.xm, bw=Math.min(66,W*.13), bh=bw*.78, wallX=Math.max(20,cx-half-bw/2-W*0.18);
+    ctx.strokeStyle=COL['line-strong']; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(wallX,floor+.5); ctx.lineTo(W-14,floor+.5); ctx.stroke();
+    cWall(ctx,wallX,floor-bh-34,floor);
+    ctx.setLineDash([4,4]); ctx.strokeStyle=COL['accent']; ctx.beginPath(); ctx.moveTo(cx+.5,24); ctx.lineTo(cx+.5,floor+26); ctx.stroke();
+    ctx.strokeStyle=COL['line-strong']; [-1,1].forEach(d=>{ ctx.beginPath(); ctx.moveTo(cx+d*half+.5,floor-bh-14); ctx.lineTo(cx+d*half+.5,floor+26); ctx.stroke(); }); ctx.setLineDash([]);
+    cText(ctx,'0',cx,floor+38,COL['accent'],MONO,'center'); cText(ctx,'−'+fmtLen(P.xm),cx-half,floor+38,COL['ink-3'],MONO,'center'); cText(ctx,'+'+fmtLen(P.xm),cx+half,floor+38,COL['ink-3'],MONO,'center');
+    const bx=cx+this.x*s; cSpring(ctx,wallX,bx-bw/2,floor-bh/2,14,10,COL['ink-2']);
+    ctx.fillStyle=COL['surface-2']; rrect(ctx,bx-bw/2,floor-bh,bw,bh,6); ctx.fill(); ctx.strokeStyle=COL['ink-2']; ctx.lineWidth=1.6; ctx.stroke();
+    ctx.fillStyle=COL['c-x']; ctx.fillRect(bx-bw/2+6,floor-bh+6,bw-12,3);
+    cText(ctx,sig(P.m,3)+' kg',bx,floor-bh/2+4,COL['ink'],'600 12px "Instrument Sans", sans-serif','center');
+    if($('#pgVec').checked){ const w=this.w0(), vm=w*P.xm||1, am=w*w*P.xm||1, a=this.acc(this.x,this.v), L=Math.min(80,half*.6);
+      cArrow(ctx,bx,floor-bh-14,bx+this.v/vm*L,floor-bh-14,COL['c-v']); cText(ctx,'v',bx+this.v/vm*L+(this.v>=0?8:-14),floor-bh-14,COL['c-v'],'italic 600 14px Newsreader, serif');
+      cArrow(ctx,bx,floor+14,bx+a/am*L,floor+14,COL['c-a']); if(Math.abs(a/am)>.08) cText(ctx,'a',bx+a/am*L+(a>=0?8:-14),floor+14,COL['c-a'],'italic 600 14px Newsreader, serif'); }
+    cText(ctx,'x = '+fmtLen(this.x),14,18,COL['c-x'],MONO); cText(ctx,'v = '+sig(this.v,3)+' m/s',14,36,COL['c-v'],MONO);
+    this.drawGraph(); },
+  drawGraph(){ const P=this.P; const {ctx,W,H}=fitCanvas($('#pgGraph')); const w=this.w0(), win=this.win(), t0=Math.max(0,this.t-win);
+    const rows=[['x',COL['c-x'],1,P.xm,fmtLen],['v',COL['c-v'],2,w*P.xm,v=>sig(v,3)+' m/s'],['a',COL['c-a'],3,w*w*P.xm,v=>sig(v,3)+' m/s²']], rh=(H-18)/3, gx=34, gw=W-gx-12;
+    rows.forEach(([n,c,idx,amp,fm],i)=>{ const cy=8+rh*i+rh/2, sy=(rh/2-6)/(amp||1);
+      ctx.strokeStyle=COL['grid']; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(gx,cy-rh/2+6); ctx.lineTo(gx+gw,cy-rh/2+6); ctx.stroke();
+      ctx.strokeStyle=COL['line-strong']; ctx.beginPath(); ctx.moveTo(gx,cy+.5); ctx.lineTo(gx+gw,cy+.5); ctx.stroke();
+      cText(ctx,n,12,cy,c,'italic 600 16px Newsreader, serif');
+      ctx.strokeStyle=c; ctx.lineWidth=2; ctx.beginPath(); let first=true;
+      for(const p of this.hist){ if(p[0]<t0) continue; const X=gx+(p[0]-t0)/win*gw, Y=cy-p[idx]*sy; if(first){ ctx.moveTo(X,Y); first=false; } else ctx.lineTo(X,Y); } ctx.stroke();
+      const last=this.hist[this.hist.length-1]; if(last){ const X=gx+(last[0]-t0)/win*gw, Y=cy-last[idx]*sy; ctx.fillStyle=c; ctx.beginPath(); ctx.arc(X,Y,4,0,7); ctx.fill(); }
+      const cur=[null,this.x,this.v,this.acc(this.x,this.v)][idx], lab=fm(cur); ctx.font=MONO; const tw=ctx.measureText(lab).width; ctx.fillStyle=COL['surface']; ctx.globalAlpha=.9; ctx.fillRect(W-16-tw,cy-rh/2+6,tw+8,16); ctx.globalAlpha=1; cText(ctx,lab,W-12,cy-rh/2+14,COL['ink-3'],MONO,'right'); });
+    cText(ctx,`${nf(t0,2)} s`,gx,H-6,COL['ink-3'],MONO); cText(ctx,`${nf(t0+win,2)} s`,W-12,H-6,COL['ink-3'],MONO,'right'); },
+  ui(){ const P=this.P, w=this.w0(), U=.5*P.k*this.x*this.x, K=.5*P.m*this.v*this.v, E=U+K, E0=this.E0||1;
+    const bars=$$('#pgEnergy .ebar'); [[U],[K],[E]].forEach(([v],i)=>{ $('i',bars[i]).style.width=clamp(v/E0*100,0,100)+'%'; $('.val',bars[i]).textContent=sig(v,3)+' J'; });
+    const bc=2*Math.sqrt(P.k*P.m); let reg='tanpa redaman'; if(P.b>0) reg=Math.abs(P.b-bc)<.02*bc?'redaman kritis':P.b<bc?'kurang redam':'lebih redam'; $('#pgRegime').textContent=reg;
+    const wd=P.b>0&&P.b<bc?Math.sqrt(w*w-(P.b/2/P.m)**2):null;
+    const R=[['ω',sig(w,4)+' rad/s'],['f',sig(w/2/Math.PI,4)+' Hz'],['T',sig(2*Math.PI/w,4)+' s'],['E awal',sig(E0,3)+' J'],['vₘ = ωxₘ',sig(w*P.xm,3)+' m/s'],['aₘ = ω²xₘ',sig(w*w*P.xm,3)+' m/s²']];
+    if(P.b>0) R.push(["ω′ (teredam)",wd?sig(wd,4)+' rad/s':'tidak berosilasi'],['b kritis',sig(bc,3)+' kg/s']);
+    setReadouts('#pgRead',R); } };
+/* ---- (b) Pendulum ---- */
+S.pendulum={ P:{L:1,m:1,theta0Deg:20,g:9.8}, t:0,th:0,om:0,hist:[],run:0,
+  w0(){ return Math.sqrt(this.P.g/this.P.L); }, T0(){ return 2*Math.PI/this.w0(); }, th0(){ return this.P.theta0Deg*Math.PI/180; },
+  Tex(){ return this.T0()/agm(1,Math.cos(this.th0()/2)); }, win(){ return clamp(3*this.Tex(),0.5,40); },
+  reset(){ this.t=0; this.th=this.th0(); this.om=0; this.hist=[]; this.lastS=-1; this.sample(); },
+  approx(t){ return this.th0()*Math.cos(this.w0()*t); },
+  sample(){ this.hist.push([this.t,this.th,this.approx(this.t)]); this.lastS=this.t; const lim=this.t-this.win()*1.05; while(this.hist.length>2&&this.hist[1][0]<lim) this.hist.shift(); },
+  step(dt){ const w2=this.P.g/this.P.L, n=Math.min(4000,Math.ceil(dt/(this.T0()/800))), hh=dt/n, f=x=>-w2*Math.sin(x), sd=this.win()/400;
+    for(let i=0;i<n;i++){ [this.th,this.om]=rk4([this.th,this.om],f,hh); this.t+=hh; if(this.t-this.lastS>=sd) this.sample(); } },
+  current(){ const P=this.P; return {type:'pendulum',L:P.L,m:P.m,theta0:+this.th0().toFixed(4),theta0Deg:P.theta0Deg,g:P.g}; },
+  draw(){ const P=this.P; const {ctx,W,H}=fitCanvas($('#pdStage')); const th0=this.th0(), up=Math.max(0,-Math.cos(th0));
+    const reachX=Math.sin(Math.min(th0,Math.PI/2)), s=Math.min((H-70)/(1+up),(W/2-40)/Math.max(reachX,.3)), px=W/2, py=26+up*s;
+    ctx.fillStyle=COL['surface-3']; ctx.fillRect(px-60,py-12,120,10); ctx.strokeStyle=COL['line-strong']; ctx.lineWidth=1; ctx.strokeRect(px-59.5,py-11.5,119,9);
+    ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,py+s+18); ctx.stroke();
+    ctx.beginPath(); ctx.arc(px,py,s,Math.PI/2-th0,Math.PI/2+th0); ctx.stroke(); ctx.setLineDash([]);
+    const r=8+6*Math.cbrt(P.m);
+    if($('#pdApprox').checked){ const ta=this.approx(this.t), ax=px+s*Math.sin(ta), ay=py+s*Math.cos(ta);
+      ctx.globalAlpha=.55; ctx.setLineDash([5,4]); ctx.strokeStyle=COL['c-v']; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(ax,ay); ctx.stroke(); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(ax,ay,r,0,7); ctx.stroke(); ctx.globalAlpha=1; }
+    const bx=px+s*Math.sin(this.th), by=py+s*Math.cos(this.th);
+    ctx.strokeStyle=COL['ink']; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(bx,by); ctx.stroke();
+    ctx.fillStyle=COL['c-x']; ctx.beginPath(); ctx.arc(bx,by,r,0,7); ctx.fill(); ctx.strokeStyle=COL['surface']; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle=COL['ink']; ctx.beginPath(); ctx.arc(px,py,3.5,0,7); ctx.fill();
+    cText(ctx,'θ = '+nf(this.th*180/Math.PI,1)+'°',14,18,COL['c-x'],MONO); cText(ctx,'L = '+nf(P.L,2)+' m',14,36,COL['ink-3'],MONO);
+    const bar=s/P.L; if(bar>8){ const bl=bar>=W*.5?bar/10:bar, lab=bar>=W*.5?'10 cm':'1 m'; ctx.strokeStyle=COL['ink-3']; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(W-14-bl,H-14); ctx.lineTo(W-14,H-14); ctx.stroke(); cText(ctx,lab,W-14-bl/2,H-26,COL['ink-3'],MONO,'center'); }
+    this.drawGraph(); },
+  drawGraph(){ const {ctx,W,H}=fitCanvas($('#pdGraph')); const win=this.win(), t0=Math.max(0,this.t-win), gx=40, gw=W-gx-12, cy=H/2-6, amp=this.th0()||1, sy=(H/2-24)/amp;
+    ctx.strokeStyle=COL['line-strong']; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(gx,cy+.5); ctx.lineTo(gx+gw,cy+.5); ctx.stroke();
+    ctx.strokeStyle=COL['grid']; [-1,1].forEach(d=>{ ctx.beginPath(); ctx.moveTo(gx,cy-d*amp*sy); ctx.lineTo(gx+gw,cy-d*amp*sy); ctx.stroke(); });
+    cText(ctx,'+'+nf(this.P.theta0Deg,0)+'°',4,cy-amp*sy,COL['ink-3'],MONO); cText(ctx,'−'+nf(this.P.theta0Deg,0)+'°',4,cy+amp*sy,COL['ink-3'],MONO);
+    [[2,COL['c-v'],[6,5]],[1,COL['c-x'],[]]].forEach(([idx,c,dash])=>{ if(idx===2&&!$('#pdApprox').checked) return; ctx.setLineDash(dash); ctx.strokeStyle=c; ctx.lineWidth=2; ctx.beginPath(); let f=true;
+      for(const p of this.hist){ if(p[0]<t0) continue; const X=gx+(p[0]-t0)/win*gw, Y=cy-p[idx]*sy; if(f){ ctx.moveTo(X,Y); f=false; } else ctx.lineTo(X,Y); } ctx.stroke(); }); ctx.setLineDash([]);
+    cText(ctx,`${nf(t0,1)} s`,gx,H-8,COL['ink-3'],MONO); cText(ctx,`${nf(t0+win,1)} s`,W-12,H-8,COL['ink-3'],MONO,'right'); },
+  ui(){ const P=this.P, T0=this.T0(), Tx=this.Tex(), th0=this.th0();
+    setReadouts('#pdRead',[['T₀ sudut kecil',sig(T0,4)+' s'],['T eksak',sig(Tx,4)+' s'],['Selisih',nf((Tx/T0-1)*100,2)+' %'],['ω₀ = √(g/L)',sig(this.w0(),4)+' rad/s'],['E = mgL(1−cos θ₀)',sig(P.m*P.g*P.L*(1-Math.cos(th0)),3)+' J'],['v maks',sig(Math.sqrt(2*P.g*P.L*(1-Math.cos(th0))),3)+' m/s']]); } };
+/* ---- (c) Perbandingan redaman ---- */
+S.teredam={ P:{m:1,k:20,zU:0.15,zO:2.5}, t:0,run:0,X0:0.1,
+  w0(){ return Math.sqrt(this.P.k/this.P.m); }, T0(){ return 2*Math.PI/this.w0(); }, bc(){ return 2*Math.sqrt(this.P.k*this.P.m); },
+  zetas(){ return [this.P.zU,1,this.P.zO]; }, tMax(){ return 4*this.T0(); },
+  reset(){ this.t=0; this.done=false; const N=900, tm=this.tMax(), sub=8, hh=tm/N/sub, P=this.P;
+    this.traj=this.zetas().map(z=>{ const b=z*this.bc(), f=(x,v)=>-(P.k*x+b*v)/P.m; let st=[this.X0,0]; const out=new Float64Array(N+1); out[0]=st[0];
+      for(let i=1;i<=N;i++){ for(let j=0;j<sub;j++) st=rk4(st,f,hh); out[i]=st[0]; } return out; });
+    this.settle=this.traj.map(a=>{ let last=0; for(let i=0;i<a.length;i++) if(Math.abs(a[i])>0.02*this.X0) last=i; return last>=a.length-1?null:last/(a.length-1)*tm; }); },
+  xAt(i,t){ const a=this.traj[i], N=a.length-1, u=clamp(t/this.tMax(),0,1)*N, k=Math.floor(u), fr=u-k; return k>=N?a[N]:a[k]*(1-fr)+a[k+1]*fr; },
+  step(dt){ this.t+=dt; if(this.t>=this.tMax()){ this.t=this.tMax(); this.done=true; Sim.pause(); } },
+  current(){ const P=this.P; return {type:'teredam',m:P.m,k:P.k,zetaKurang:P.zU,zetaLebih:P.zO,bKritis:+this.bc().toFixed(4),b:[+(P.zU*this.bc()).toFixed(4),+this.bc().toFixed(4),+(P.zO*this.bc()).toFixed(4)]}; },
+  names:['kurang redam','redaman kritis','lebih redam'],
+  draw(){ const {ctx,W,H}=fitCanvas($('#tdStage')); const lanes=3, lh=(H-16)/lanes, cx=W*0.55, half=Math.min(W*0.28,W-cx-80), s=half/this.X0, bw=Math.min(52,W*.11), bh=bw*.7, wallX=Math.max(18,cx-half-bw/2-W*.16);
+    ctx.setLineDash([4,4]); ctx.strokeStyle=COL['accent']; ctx.beginPath(); ctx.moveTo(cx+.5,6); ctx.lineTo(cx+.5,H-6); ctx.stroke(); ctx.setLineDash([]);
+    for(let i=0;i<lanes;i++){ const floor=8+lh*(i+1)-10, c=COL['c-u'+(i+1)], x=this.xAt(i,this.t), bx=cx+x*s;
+      ctx.strokeStyle=COL['line-strong']; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(wallX,floor+.5); ctx.lineTo(W-10,floor+.5); ctx.stroke(); cWall(ctx,wallX,floor-bh-14,floor);
+      cSpring(ctx,wallX,bx-bw/2,floor-bh/2,11,7,COL['ink-2'],1.6);
+      ctx.fillStyle=COL['surface-2']; rrect(ctx,bx-bw/2,floor-bh,bw,bh,5); ctx.fill(); ctx.strokeStyle=c; ctx.lineWidth=2; ctx.stroke();
+      cText(ctx,this.names[i],W-10,floor-lh+26,c,'600 12.5px "Instrument Sans", sans-serif','right'); cText(ctx,'ζ = '+nf(this.zetas()[i],2),W-10,floor-lh+42,COL['ink-3'],MONO,'right'); }
+    this.drawGraph(); },
+  drawGraph(){ const {ctx,W,H}=fitCanvas($('#tdGraph')); const gx=58, gw=W-gx-12, cy=H/2-4, sy=(H/2-22)/this.X0, tm=this.tMax(), N=300;
+    ctx.strokeStyle=COL['line-strong']; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(gx,cy+.5); ctx.lineTo(gx+gw,cy+.5); ctx.stroke();
+    cText(ctx,'+'+fmtLen(this.X0),4,cy-this.X0*sy,COL['ink-3'],MONO); cText(ctx,'0',4,cy,COL['ink-3'],MONO);
+    const z=this.P.zU, w0=this.w0(); ctx.setLineDash([4,4]); ctx.strokeStyle=COL['ink-3']; ctx.lineWidth=1; [-1,1].forEach(d=>{ ctx.beginPath(); for(let j=0;j<=N;j++){ const t=tm*j/N, X=gx+t/tm*gw, Y=cy-d*this.X0*Math.exp(-z*w0*t)*sy; j?ctx.lineTo(X,Y):ctx.moveTo(X,Y);} ctx.stroke(); }); ctx.setLineDash([]);
+    for(let i=0;i<3;i++){ ctx.strokeStyle=COL['c-u'+(i+1)]; ctx.lineWidth=2.2; ctx.beginPath(); const jm=Math.round(this.t/tm*N);
+      for(let j=0;j<=jm;j++){ const t=tm*j/N, X=gx+t/tm*gw, Y=cy-this.xAt(i,t)*sy; j?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.stroke();
+      ctx.globalAlpha=.18; ctx.beginPath(); for(let j=jm;j<=N;j++){ const t=tm*j/N, X=gx+t/tm*gw, Y=cy-this.xAt(i,t)*sy; j>jm?ctx.lineTo(X,Y):ctx.moveTo(X,Y);} ctx.stroke(); ctx.globalAlpha=1; }
+    const X=gx+this.t/tm*gw; ctx.strokeStyle=COL['ink-2']; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(X,8); ctx.lineTo(X,H-18); ctx.stroke(); ctx.setLineDash([]);
+    cText(ctx,'0 s',gx,H-8,COL['ink-3'],MONO); cText(ctx,`${nf(tm,2)} s`,W-12,H-8,COL['ink-3'],MONO,'right'); if(this.done) cText(ctx,'Selesai. Tekan Ulang untuk menjalankan lagi.',gx+gw/2,14,COL['ink-2'],'500 12.5px "Instrument Sans", sans-serif','center'); },
+  ui(){ const P=this.P, bc=this.bc(), w=this.w0(), z=P.zU; const st=v=>v==null?'> '+nf(this.tMax(),1)+' s':sig(v,3)+' s';
+    setReadouts('#tdRead',[['ω₀ = √(k/m)',sig(w,4)+' rad/s'],['b kritis = 2√(km)',sig(bc,3)+' kg/s'],['b kurang redam',sig(z*bc,3)+' kg/s'],['b lebih redam',sig(P.zO*bc,3)+' kg/s'],["ω′ kurang redam",sig(w*Math.sqrt(1-z*z),4)+' rad/s'],['Mengendap (2%): kurang',st(this.settle[0])],['Mengendap: kritis',st(this.settle[1])],['Mengendap: lebih',st(this.settle[2])]]); } };
+function setReadouts(sel,rows){ const host=$(sel); if(host.children.length!==rows.length) host.innerHTML=rows.map(()=>'<div><span></span><b></b></div>').join('');
+  rows.forEach(([k,v],i)=>{ const d=host.children[i]; if(d.firstChild.textContent!==k) d.firstChild.textContent=k; if(d.lastChild.textContent!==v) d.lastChild.textContent=v; }); }
+
+const Sim={ types:['pegas','pendulum','teredam'], active:'pegas', playing:!reduceMotion, speed:1, visible:false, raf:0, last:0, sliders:{},
+  current(){ return S[this.active].current(); },
+  redraw(){ if(this.visible){ S[this.active].draw(); S[this.active].ui(); } },
+  select(type,updateHash=true){ if(!this.types.includes(type)) return; this.active=type;
+    $$('#simTabs [role=tab]').forEach(b=>{ const on=b.dataset.sim===type; b.setAttribute('aria-selected',on); b.tabIndex=on?0:-1; });
+    this.types.forEach(t=>$('#sim-'+t).hidden=t!==type);
+    if(updateHash&&Ctx.view==='simulasi'){ history.replaceState(null,'','#simulasi/'+type); }
+    if(type==='teredam'&&S.teredam.done){ S.teredam.reset(); }
+    this.redraw(); this.syncTransport(); updateState(); },
+  onView(v){ this.visible=v; if(v){ this.redraw(); if(this.playing) this.loop(); } else this.stop(); },
+  loop(){ if(this.raf) return; this.last=performance.now(); const f=ts=>{ this.raf=0; if(!this.visible||!this.playing) return; const dtr=Math.min(0.05,Math.max(0,(ts-this.last)/1000)); this.last=ts;
+      const s=S[this.active]; s.step(dtr*this.speed); s.run+=dtr; if(s.run>3) Progress.mark('sims',this.active); s.draw(); s.ui(); this.syncTime(); if(this.playing) this.raf=requestAnimationFrame(f); }; this.raf=requestAnimationFrame(f); },
+  stop(){ if(this.raf){ cancelAnimationFrame(this.raf); this.raf=0; } },
+  play(){ if(this.active==='teredam'&&S.teredam.done) S.teredam.reset(); this.playing=true; this.syncTransport(); this.loop(); },
+  pause(){ this.playing=false; this.stop(); this.syncTransport(); },
+  reset(){ S[this.active].reset(); this.redraw(); this.syncTime(); },
+  syncTime(){ $$('[data-transport] .time').forEach(e=>e.textContent='t = '+nf(S[this.active].t,2)+' s'); },
+  syncTransport(){ $$('[data-transport]').forEach(tb=>{ const b=$('.pp',tb); b.innerHTML=icon(this.playing?'pause':'play')+(this.playing?'Jeda':'Jalankan'); b.setAttribute('aria-pressed',this.playing); $('select',tb).value=String(this.speed); }); this.syncTime(); },
+  apply(sim){ if(!sim||typeof sim!=='object') return false; const type=String(sim.type||this.active).toLowerCase(); if(!this.types.includes(type)) return false;
+    const num=v=>{ const n=typeof v==='string'?parseFloat(v.replace(',','.')):v; return typeof n==='number'&&isFinite(n)?n:undefined; };
+    const pick=(...ks)=>{ for(const k of ks){ const v=num(sim[k]); if(v!==undefined) return v; } };
+    const ang=(rad,deg)=>{ if(deg!==undefined) return deg; if(rad===undefined) return undefined; return Math.abs(rad)>2*Math.PI+0.01?rad:rad*180/Math.PI; };
+    if(type==='pegas'){ const P=S.pegas.P; const m=pick('m','massa'), k=pick('k'), xm=pick('xm','x_m','A','amplitudo','amplitude'), b=pick('b'), ph=ang(pick('phi','fase','phase'),pick('phiDeg','phi_deg'));
+      if(m>0) P.m=clamp(m,0.01,10); if(k>0) P.k=clamp(k,1,6000); if(xm>0) P.xm=clamp(xm,0.01,2.5); if(b>=0) P.b=clamp(b,0,100); if(ph!==undefined) P.phiDeg=clamp(((ph+180)%360+360)%360-180,-180,180); }
+    if(type==='pendulum'){ const P=S.pendulum.P; const L=pick('L','panjang'), m=pick('m'), g=pick('g'), th=ang(pick('theta0','theta','sudut'),pick('theta0Deg','thetaDeg'));
+      if(L>0) P.L=clamp(L,0.1,5); if(m>0) P.m=clamp(m,0.05,10); if(g>0) P.g=clamp(g,0.5,30); if(th!==undefined) P.theta0Deg=clamp(Math.abs(th),0.5,175); }
+    if(type==='teredam'){ const P=S.teredam.P; const m=pick('m'), k=pick('k'); if(m>0) P.m=clamp(m,0.1,10); if(k>0) P.k=clamp(k,1,200);
+      const bc=2*Math.sqrt(P.k*P.m); let z=pick('zeta','zetaKurang'), zo=pick('zetaLebih'); const b=pick('b'); if(b!==undefined&&z===undefined){ const r=b/bc; if(r<1) z=r; else if(r>1) zo=r; }
+      if(z>0) P.zU=clamp(z,0.02,0.95); if(zo>0) P.zO=clamp(zo,1.1,5); }
+    S[type].reset(); Object.values(this.sliders[type]||{}).forEach(s=>s.update()); this.select(type,false); updateState(); return true; } };
+function onParam(type){ S[type].reset(); Sim.redraw(); Sim.syncTime(); updateState(); }
+{ const G=$('#pgSliders'), P=S.pegas.P; Sim.sliders.pegas={
+    m:makeSlider(G,{label:'Massa <i>m</i>',plain:'Massa',unit:'kg',min:0.01,max:10,log:true,digits:4},()=>P.m,v=>{P.m=v;onParam('pegas')}),
+    k:makeSlider(G,{label:'Konstanta pegas <i>k</i>',plain:'Konstanta pegas',unit:'N/m',min:1,max:6000,log:true,digits:2},()=>P.k,v=>{P.k=v;onParam('pegas')}),
+    xm:makeSlider(G,{label:'Amplitudo <i>x</i><sub>m</sub>',plain:'Amplitudo',unit:'m',min:0.01,max:2.5,log:true,digits:4},()=>P.xm,v=>{P.xm=v;onParam('pegas')}),
+    phi:makeSlider(G,{label:'Tetapan fasa <i>φ</i>',plain:'Tetapan fasa',unit:'°',min:-180,max:180,step:5,digits:1},()=>P.phiDeg,v=>{P.phiDeg=v;onParam('pegas')}),
+    b:makeSlider(G,{label:'Redaman <i>b</i>',plain:'Konstanta redaman',unit:'kg/s',min:0,max:100,step:0.05,digits:2},()=>P.b,v=>{P.b=v;onParam('pegas')}) }; }
+{ const G=$('#pdSliders'), P=S.pendulum.P; Sim.sliders.pendulum={
+    L:makeSlider(G,{label:'Panjang tali <i>L</i>',plain:'Panjang tali',unit:'m',min:0.1,max:5,step:0.01,digits:2},()=>P.L,v=>{P.L=v;onParam('pendulum')}),
+    m:makeSlider(G,{label:'Massa beban <i>m</i>',plain:'Massa beban',unit:'kg',min:0.05,max:10,log:true,digits:3},()=>P.m,v=>{P.m=v;onParam('pendulum')}),
+    th:makeSlider(G,{label:'Sudut awal <i>θ</i><sub>0</sub>',plain:'Sudut awal',unit:'°',min:0.5,max:175,step:0.5,digits:1},()=>P.theta0Deg,v=>{P.theta0Deg=v;onParam('pendulum')}),
+    g:makeSlider(G,{label:'Gravitasi <i>g</i>',plain:'Percepatan gravitasi',unit:'m/s²',min:0.5,max:30,step:0.01,digits:2},()=>P.g,v=>{P.g=v;onParam('pendulum');syncG()}) }; }
+{ const G=$('#tdSliders'), P=S.teredam.P; Sim.sliders.teredam={
+    m:makeSlider(G,{label:'Massa <i>m</i>',plain:'Massa',unit:'kg',min:0.1,max:10,log:true,digits:3},()=>P.m,v=>{P.m=v;onParam('teredam')}),
+    k:makeSlider(G,{label:'Konstanta pegas <i>k</i>',plain:'Konstanta pegas',unit:'N/m',min:1,max:200,log:true,digits:2},()=>P.k,v=>{P.k=v;onParam('teredam')}),
+    zU:makeSlider(G,{label:'ζ kurang redam',plain:'Rasio redaman kurang redam',unit:'',min:0.02,max:0.95,step:0.01,digits:2},()=>P.zU,v=>{P.zU=v;onParam('teredam')}),
+    zO:makeSlider(G,{label:'ζ lebih redam',plain:'Rasio redaman lebih redam',unit:'',min:1.1,max:5,step:0.05,digits:2},()=>P.zO,v=>{P.zO=v;onParam('teredam')}) }; }
+function syncG(){ $$('#gPresets .chip').forEach(c=>c.setAttribute('aria-pressed',Math.abs(+c.dataset.g-S.pendulum.P.g)<0.005)); }
+$$('#gPresets .chip').forEach(c=>c.addEventListener('click',()=>{ S.pendulum.P.g=+c.dataset.g; Sim.sliders.pendulum.g.update(); onParam('pendulum'); syncG(); }));
+syncG();
+$('#pgVec').addEventListener('change',()=>Sim.redraw()); $('#pdApprox').addEventListener('change',()=>Sim.redraw());
+$('#pgPreset').addEventListener('change',e=>{ const id=e.target.value; if(!id) return; const kind=problemKind({id}); const sim=KEY[kind]&&KEY[kind].sim; if(sim){ Sim.apply(sim); Sim.play(); toast('Setelan soal dimuat. Kecepatan bisa diperlambat di bawah grafik.'); } e.target.value=''; });
+$$('[data-transport]').forEach(tb=>{
+  const pp=h('button',{class:'btn sm primary pp',type:'button',onclick:()=>Sim.playing?Sim.pause():Sim.play()});
+  const rs=h('button',{class:'btn sm',type:'button',html:icon('reset')+'Ulang',onclick:()=>Sim.reset()});
+  const sel=h('select',{'aria-label':'Kecepatan waktu'}); [['0.05','0,05×'],['0.1','0,1×'],['0.25','0,25×'],['0.5','0,5×'],['1','1×'],['2','2×'],['4','4×']].forEach(([v,l])=>sel.append(h('option',{value:v,text:l})));
+  sel.addEventListener('change',()=>{ Sim.speed=+sel.value; Sim.syncTransport(); });
+  tb.append(pp,rs,h('span',{class:'time mono'}),h('span',{class:'spacer'}),h('label',{class:'speed'},'Kecepatan',sel)); });
+$$('#simTabs [role=tab]').forEach(b=>{ b.addEventListener('click',()=>Sim.select(b.dataset.sim));
+  b.addEventListener('keydown',e=>{ const i=Sim.types.indexOf(b.dataset.sim); let j=null; if(e.key==='ArrowRight') j=(i+1)%3; if(e.key==='ArrowLeft') j=(i+2)%3; if(e.key==='Home') j=0; if(e.key==='End') j=2;
+    if(j!=null){ e.preventDefault(); Sim.select(Sim.types[j]); $('#tab-'+Sim.types[j]).focus(); } }); });
+document.addEventListener('keydown',e=>{ if(Ctx.view!=='simulasi'||e.key!==' '||e.repeat) return; const t=e.target; if(t.closest('input,textarea,select,button,a,[contenteditable],.chat')) return; e.preventDefault(); Sim.playing?Sim.pause():Sim.play(); });
+$('#simAsk').addEventListener('click',()=>{ const p=Sim.current(); Chat.open({send:`Jelaskan apa yang sedang terjadi di simulasi ${p.type} dengan setelan sekarang (${Object.entries(p).filter(([k])=>k!=='type').map(([k,v])=>k+'='+(Array.isArray(v)?v.join('/'):v)).join(', ')}). Hitung juga besaran pentingnya.`}); });
+S.pegas.reset(); S.pendulum.reset(); S.teredam.reset();
+if('ResizeObserver' in window){ let q=0; new ResizeObserver(()=>{ if(q) return; q=requestAnimationFrame(()=>{ q=0; Sim.redraw(); Hero.resize(); }); }).observe(document.body); }
+document.addEventListener('visibilitychange',()=>{ if(document.hidden){ Sim.stop(); Hero.stop(); } else { if(Sim.visible&&Sim.playing) Sim.loop(); if(Hero.visible) Hero.start(); } });
+
+/* ==================== Animasi beranda ==================== */
+const Hero={ visible:false,raf:0,t:0,trail:[],last:0,
+  draw(){ const c=$('#heroCanvas'); const {ctx,W,H}=fitCanvas(c); const w=Math.PI, xm=1, x=xm*Math.cos(w*this.t);
+    const floor=H*0.36, cx=W*0.3, half=Math.min(W*0.17,90), bw=46, bh=36, wallX=20;
+    ctx.strokeStyle=COL['line-strong']; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(wallX,floor+.5); ctx.lineTo(cx+half+bw,floor+.5); ctx.stroke(); cWall(ctx,wallX,floor-bh-20,floor);
+    const bx=cx+x*half; cSpring(ctx,wallX,bx-bw/2,floor-bh/2,12,8,COL['ink-2']);
+    ctx.fillStyle=COL['surface-2']; rrect(ctx,bx-bw/2,floor-bh,bw,bh,5); ctx.fill(); ctx.strokeStyle=COL['ink-2']; ctx.lineWidth=1.5; ctx.stroke(); ctx.fillStyle=COL['c-x']; ctx.fillRect(bx-bw/2+5,floor-bh+5,bw-10,3);
+    const gx0=cx+half+bw+24, gw=W-gx0-14, gy=floor-bh/2, top=18, bot=H-18;
+    ctx.setLineDash([3,4]); ctx.strokeStyle=COL['line-strong']; ctx.beginPath(); ctx.moveTo(bx,floor-bh/2); ctx.lineTo(gx0,floor-bh/2); ctx.stroke(); ctx.setLineDash([]);
+    // grafik vertikal: waktu mengalir ke bawah, simpangan horizontal mengikuti balok
+    const sx=x=>cx+x*half; ctx.strokeStyle=COL['grid']; ctx.lineWidth=1; for(let k=-1;k<=1;k++){ ctx.beginPath(); ctx.moveTo(sx(k),floor+12); ctx.lineTo(sx(k),bot); ctx.stroke(); }
+    ctx.strokeStyle=COL['c-x']; ctx.lineWidth=2.2; ctx.beginPath(); const span=bot-floor-12, dur=4;
+    for(let i=0;i<=160;i++){ const tt=this.t-dur*i/160; if(tt<0&&!reduceMotion) break; const X=sx(Math.cos(w*tt)), Y=floor+12+span*i/160; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.stroke();
+    cText(ctx,'t',cx+half+12,bot-4,COL['ink-3'],'italic 600 14px Newsreader, serif');
+    // panel kanan: energi
+    const U=x*x, K=1-U, bx0=gx0, bwid=gw; cText(ctx,'Energi',bx0,top+4,COL['ink-3'],'600 12px "Instrument Sans", sans-serif');
+    [['U',U,COL['c-U']],['K',K,COL['c-K']],['E',1,COL['ink-2']]].forEach(([n,v,c],i)=>{ const y=top+26+i*30; cText(ctx,n,bx0,y,c,'600 13px "JetBrains Mono", monospace');
+      ctx.fillStyle=COL['surface-2']; rrect(ctx,bx0+20,y-6,bwid-20,12,3); ctx.fill(); ctx.fillStyle=c; rrect(ctx,bx0+20,y-6,Math.max(2,(bwid-20)*v),12,3); ctx.fill(); });
+    const vy=top+26+3*30+10; cText(ctx,'x = '+nf(x,2)+' xₘ',bx0,vy,COL['c-x'],MONO); cText(ctx,'v = '+nf(-Math.sin(w*this.t),2)+' vₘ',bx0,vy+18,COL['c-v'],MONO); },
+  frame(ts){ this.raf=0; if(!this.visible) return; const dt=Math.min(0.05,(ts-this.last)/1000); this.last=ts; this.t+=dt; this.draw(); this.raf=requestAnimationFrame(t=>this.frame(t)); },
+  start(){ if(reduceMotion){ this.t=0.6; this.draw(); return; } if(!this.raf){ this.last=performance.now(); this.raf=requestAnimationFrame(t=>this.frame(t)); } },
+  stop(){ if(this.raf){ cancelAnimationFrame(this.raf); this.raf=0; } },
+  resize(){ if(this.visible) this.draw(); },
+  onView(v){ this.visible=v; if(v) this.start(); else this.stop(); } };
+
+/* ==================== Kartu rumus ==================== */
+const TOPIC_LABEL={ghs:'GHS',kecepatan:'Kecepatan & percepatan',pegas:'Pegas',energi:'Energi',pendulum:'Pendulum',teredam:'Teredam'};
+const topicKey=t=>String(t||'lain').toLowerCase();
+const topicName=t=>TOPIC_LABEL[topicKey(t)]||String(t||'Lainnya');
+function renderFormulaMath(){ if(window.katex){ renderStaticMath($('#fGrid')); renderStaticMath($('#flashcard')); } }
+const Formulas={ topic:'all',
+  build(){ const topics=[...new Set(FORMULAS.map(f=>topicKey(f.topic)))]; const host=$('#fTopics');
+    [['all','Semua'],...topics.map(t=>[t,topicName(t)])].forEach(([k,l])=>{ host.append(h('button',{class:'chip',type:'button','aria-pressed':k==='all','data-t':k,text:l,onclick:()=>{ this.topic=k; $$('#fTopics .chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.t===k)); this.filter(); }})); });
+    const pins=new Set(store.get('pinned',[])); const grid=$('#fGrid');
+    FORMULAS.forEach(f=>{ const card=h('article',{class:'card f-card'+(pins.has(f.id)?' is-pinned':''),'data-id':f.id,'data-topic':topicKey(f.topic),'data-search':`${f.name} ${f.note||''} ${topicName(f.topic)} ${f.id} ${f.latex}`.toLowerCase()});
+      const pinBtn=h('button',{class:'btn sm ghost icon-only',type:'button','aria-pressed':pins.has(f.id),'aria-label':'Sorot rumus '+f.name,title:'Sorot',html:icon('pin'),onclick:()=>this.togglePin(f.id,card,pinBtn)});
+      card.append(h('div',{class:'f-top'},h('h3',{text:f.name}),h('span',{class:'tag',text:topicName(f.topic)})),
+        h('div',{class:'f-math mb','data-tex':f.latex,html:texHTML(f.latex,true)}),
+        f.note?setMD(h('p',{class:'f-note'}),f.note,true):null,
+        h('div',{class:'f-actions'},h('button',{class:'btn sm',type:'button',html:icon('copy')+'Salin LaTeX',onclick:async()=>{ const ok=await copyText(f.latex); toast(ok?'LaTeX disalin.':'Tidak bisa menyalin otomatis. Kodenya: '+f.latex); }}),
+          h('button',{class:'btn sm ghost',type:'button',html:icon('spark')+'Tanya',onclick:()=>Chat.open({send:`Jelaskan rumus ${f.name}: $${f.latex}$. Dari mana asalnya dan kapan dipakai?`})}),h('span',{style:'flex:1'}),pinBtn));
+      if(pins.has(f.id)) pinBtn.classList.add('is-on'); grid.append(card); });
+    $('#fSearch').addEventListener('input',()=>this.filter()); $('#fPinnedOnly').addEventListener('change',()=>this.filter()); this.filter(); },
+  togglePin(id,card,btn){ const pins=new Set(store.get('pinned',[])); if(pins.has(id)) pins.delete(id); else pins.add(id); store.set('pinned',[...pins]);
+    const on=pins.has(id); card.classList.toggle('is-pinned',on); btn.setAttribute('aria-pressed',on); btn.classList.toggle('is-on',on); toast(on?'Rumus disorot.':'Sorotan dilepas.'); if($('#fPinnedOnly').checked) this.filter(); },
+  filter(){ const q=$('#fSearch').value.trim().toLowerCase(), only=$('#fPinnedOnly').checked; let n=0;
+    $$('#fGrid .f-card').forEach(c=>{ const ok=(this.topic==='all'||c.dataset.topic===this.topic)&&(!q||q.split(/\s+/).every(w=>c.dataset.search.includes(w)))&&(!only||c.classList.contains('is-pinned')); c.hidden=!ok; if(ok) n++; });
+    $('#fCount').textContent=n?`${n} rumus`:''; let e=$('#fGrid .empty'); if(!n&&!e){ e=h('div',{class:'empty card',style:'grid-column:1/-1'}); $('#fGrid').append(e); } if(e){ e.hidden=!!n; e.textContent=only?'Belum ada rumus yang kamu sorot. Klik ikon bintang di kartu untuk menyorot.':'Tidak ada rumus yang cocok. Coba kata lain, misalnya "periode".'; } },
+  highlight(id){ let card=$(`#fGrid .f-card[data-id="${CSS.escape(String(id))}"]`);
+    if(!card){ const q=String(id).toLowerCase(); card=$$('#fGrid .f-card').find(c=>c.dataset.search.includes(q)); }
+    go('#rumus'); this.topic='all'; $('#fSearch').value=''; $('#fPinnedOnly').checked=false; $$('#fTopics .chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.t==='all')); this.filter();
+    if(card){ setTimeout(()=>{ card.scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'center'}); card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash'); },80); } } };
+
+/* ==================== Kuis ==================== */
+const Quiz={ ai:{items:[],ans:{}},
+  init(){ this.renderCP(); $$('#quizTabs [role=tab]').forEach(b=>{ b.addEventListener('click',()=>this.tab(b.dataset.q));
+      b.addEventListener('keydown',e=>{ const ks=['cp','ai','fc'], i=ks.indexOf(b.dataset.q); let j=null; if(e.key==='ArrowRight') j=(i+1)%3; if(e.key==='ArrowLeft') j=(i+2)%3; if(j!=null){ e.preventDefault(); this.tab(ks[j]); $('#qtab-'+ks[j]).focus(); } }); });
+    $('#aiQuizForm').addEventListener('submit',e=>{ e.preventDefault(); this.generate(); }); this.renderScore($('#aiScore'),[],{},null); },
+  tab(k){ $$('#quizTabs [role=tab]').forEach(b=>{ const on=b.dataset.q===k; b.setAttribute('aria-selected',on); b.tabIndex=on?0:-1; }); ['cp','ai','fc'].forEach(x=>$('#qp-'+x).hidden=x!==k); if(k==='fc') Flash.show(); },
+  resetCP(){ store.set('cpAnswers',{}); this.renderCP(); },
+  renderCP(){ const ans=store.get('cpAnswers',{}); this.renderList($('#cpList'),FB.quiz,ans,(id,opt)=>{ ans[id]=opt; store.set('cpAnswers',ans); if(FB.quiz.every(q=>ans[q.id])) Progress.mark('quiz'); this.renderScore($('#cpScore'),FB.quiz,ans,'cp'); });
+    this.renderScore($('#cpScore'),FB.quiz,ans,'cp'); },
+  renderList(host,items,ans,onAnswer){ host.innerHTML=''; items.forEach((q,i)=>{ const card=h('div',{class:'card q-card'});
+    card.append(h('div',{class:'q-meta'},h('span',{class:'tag'+(q.source==='ai'?' accent':''),text:q.tag||(q.source==='ai'?'Buatan AI':q.source==='bank'?'Bank soal':'Soal')}),h('span',{class:'muted mono',style:'font-size:12px',text:`${i+1} / ${items.length}`})),
+      setMD(h('div',{class:'q-prompt md'}),q.prompt));
+    const opts=h('div',{class:'q-opts',role:'group','aria-label':'Pilihan jawaban soal '+(i+1)}); const ex=h('div',{class:'q-explain','aria-live':'polite',hidden:true});
+    const correctId=String(q.correct);
+    const show=sel=>{ $$('.q-opt',opts).forEach(b=>{ b.disabled=true; const id=b.dataset.id; if(id===correctId) b.classList.add('correct'); else if(id===sel) b.classList.add('wrong'); });
+      const ok=sel===correctId; ex.hidden=false; ex.innerHTML=`<span class="verdict ${ok?'ok':'no'}">${ok?'Benar.':'Belum tepat.'}</span>`; ex.append(setMD(h('span'),q.explanation||'',true)); };
+    (q.options||[]).forEach((o,j)=>{ const b=h('button',{class:'q-opt',type:'button','data-id':String(o.id),html:`<span class="key">${esc(String(o.id).toUpperCase())}</span>`,onclick:()=>{ show(String(o.id)); onAnswer(q.id,String(o.id)); }}); b.append(setMD(h('span'),String(o.text),true)); opts.append(b); });
+    card.append(opts,ex); if(ans[q.id]) show(ans[q.id]); host.append(card); }); },
+  renderScore(host,items,ans,kind){ const n=items.length, done=items.filter(q=>ans[q.id]).length, right=items.filter(q=>ans[q.id]&&ans[q.id]===String(q.correct)).length;
+    host.innerHTML=''; if(!n){ host.append(h('h3',{style:'font-family:var(--f-body);font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3)',text:'Skor'}),h('p',{class:'muted',style:'margin:0;font-size:14px',text:'Skor muncul setelah soal dibuat.'})); return; }
+    host.append(h('div',{class:'score-big',html:`${right}<small> / ${n}</small>`}),h('div',{class:'bar'},h('i',{style:`width:${done/n*100}%`})),
+      h('p',{class:'muted',style:'margin:0;font-size:14px',text:done<n?`${done} dari ${n} soal sudah dijawab.`:right===n?'Semua benar. Lanjut ke soal ujian?':`Selesai. ${n-right} soal masih keliru; baca pembahasannya lalu ulangi.`}));
+    const row=h('div',{class:'btn-row'}); if(kind==='cp'){ row.append(h('button',{class:'btn sm',type:'button',html:icon('reset')+'Ulangi',onclick:()=>this.resetCP()})); if(done===n) row.append(h('a',{class:'btn sm primary',href:'#soal',text:'Ke soal ujian'})); }
+    else row.append(h('button',{class:'btn sm',type:'button',html:icon('reset')+'Ulangi',onclick:()=>{ this.ai.ans={}; this.renderAI(); }}));
+    const wrong=items.filter(q=>ans[q.id]&&ans[q.id]!==String(q.correct)); if(wrong.length) row.append(h('button',{class:'btn sm ghost',type:'button',html:icon('spark')+'Bahas yang salah',onclick:()=>Chat.open({section:'kuis',send:'Aku salah menjawab soal berikut. Jelaskan konsep yang keliru:\n\n'+wrong.map(q=>`- ${q.prompt} (jawabanku: ${(q.options.find(o=>String(o.id)===ans[q.id])||{}).text}; benar: ${(q.options.find(o=>String(o.id)===String(q.correct))||{}).text})`).join('\n')})}));
+    host.append(row); },
+  renderAI(){ this.renderList($('#aiList'),this.ai.items,this.ai.ans,(id,opt)=>{ this.ai.ans[id]=opt; this.renderScore($('#aiScore'),this.ai.items,this.ai.ans,'ai'); }); this.renderScore($('#aiScore'),this.ai.items,this.ai.ans,'ai'); },
+  async generate(){ const btn=$('#aiQuizBtn'); if(btn.disabled) return; const topic=$('#aiTopic').value, count=+$('#aiCount').value, difficulty=$('#aiDiff').value;
+    btn.disabled=true; const old=btn.innerHTML; btn.innerHTML='<span class="spinner" aria-hidden="true"></span>Membuat soal…'; $('#aiList').innerHTML='<div class="card empty" role="status">Tutor sedang menyusun soal. Biasanya butuh 10 sampai 30 detik.</div>';
+    let items=null, note='';
+    try{ if(T.__stub) throw {code:'offline'}; const r=await T.generateQuiz({topic:topic==='semua'?'osilasi (semua bab)':topic,count,difficulty}); items=Array.isArray(r)?r:[]; }
+    catch(e){ items=null; }
+    if(!items||!items.length){ const pool=[...FB.quiz].sort(()=>Math.random()-.5).slice(0,count); items=pool.map(q=>({...q,source:'bank',tag:'Bank soal'})); note='Tutor AI tidak tersedia, jadi soal diambil dari bank soal lokal.'; }
+    else if(items.every(q=>q.source==='bank')) note='Tutor AI sedang tidak aktif, jadi soal diambil dari bank soal modul.';
+    items=items.filter(q=>q&&q.prompt&&Array.isArray(q.options)).map((q,i)=>({...q,id:String(q.id||'q'+i),correct:String(q.correct)}));
+    this.ai={items,ans:{}}; this.renderAI(); if(note) $('#aiList').prepend(h('div',{class:'callout',style:'margin-bottom:14px',text:note}));
+    btn.disabled=false; btn.innerHTML=old; } };
+
+/* ==================== Flashcard ==================== */
+const Flash={ i:0, order:null,
+  show(){ if(!this.order) this.order=FORMULAS.map((_,i)=>i); this.render(); },
+  render(){ const f=FORMULAS[this.order[this.i]]; const fc=$('#flashcard'); fc.classList.remove('flipped');
+    $('.front',fc).innerHTML=`<span class="tag">${esc(topicName(f.topic))}</span><h3>${esc(f.name)}</h3><span class="hint">Klik untuk melihat rumus</span>`;
+    $('.back',fc).innerHTML=`<span class="f-math" data-tex="${esc(f.latex)}">${texHTML(f.latex,true)}</span>${f.note?`<span class="muted" style="font-size:14px">${mdInline(f.note)}</span>`:''}<span class="hint">Klik untuk kembali</span>`;
+    fc.setAttribute('aria-label',`Kartu ${this.i+1}: ${f.name}. Tekan untuk membalik.`); $('#fcCount').textContent=`${this.i+1} / ${FORMULAS.length}`; },
+  move(d){ this.i=(this.i+d+FORMULAS.length)%FORMULAS.length; this.render(); } };
+$('#flashcard').addEventListener('click',()=>{ const fc=$('#flashcard'); fc.classList.toggle('flipped'); });
+$('#fcPrev').addEventListener('click',()=>Flash.move(-1)); $('#fcNext').addEventListener('click',()=>Flash.move(1));
+$('#fcShuffle').addEventListener('click',()=>{ Flash.order=FORMULAS.map((_,i)=>i).sort(()=>Math.random()-.5); Flash.i=0; Flash.render(); toast('Urutan kartu diacak.'); });
+$('#qp-fc').addEventListener('keydown',e=>{ if(e.target.closest('input,select,textarea')) return; if(e.key==='ArrowRight'){ e.preventDefault(); Flash.move(1); } if(e.key==='ArrowLeft'){ e.preventDefault(); Flash.move(-1); } });
+
+/* ==================== Gambar soal (SVG) ==================== */
+const sv=(w,hh,body,label)=>`<svg viewBox="0 0 ${w} ${hh}" role="img" aria-label="${esc(label)}" style="font-family:var(--f-body)">${body}</svg>`;
+const sArrow=(x1,y1,x2,y2,c,w=2)=>{ const a=Math.atan2(y2-y1,x2-x1), hl=8; return `<line x1="${x1}" y1="${y1}" x2="${x2-Math.cos(a)*hl*.7}" y2="${y2-Math.sin(a)*hl*.7}" stroke="${c}" stroke-width="${w}"/><path d="M${x2} ${y2}L${x2-hl*Math.cos(a-.45)} ${y2-hl*Math.sin(a-.45)}L${x2-hl*Math.cos(a+.45)} ${y2-hl*Math.sin(a+.45)}z" fill="${c}"/>`; };
+const sTxt=(x,y,s,o='')=>`<text x="${x}" y="${y}" style="font-size:12px;fill:var(--ink-2)" ${o}>${s}</text>`;
+const sSpring=(x0,x1,y,n=8,a=6)=>`<path d="${springPath(x0,x1,y,n,a)}" fill="none" stroke="var(--ink-2)" stroke-width="1.6"/>`;
+function vSpring(x,y0,y1,n=8,a=7){ const L=y1-y0, lead=8, seg=(L-2*lead)/(n*2); let d=`M${x} ${y0}L${x} ${y0+lead}`; for(let i=0;i<n*2;i++) d+=`L${x+(i%2?a:-a)} ${(y0+lead+seg*(i+.5)).toFixed(1)}`; return `<path d="${d}L${x} ${y1-lead}L${x} ${y1}" fill="none" stroke="var(--ink-2)" stroke-width="1.6"/>`; }
+const FIG={
+  energi(){ const X=t=>44+t*2400, Y=e=>176-e*480; let s='';
+    for(let i=0;i<=10;i++) s+=`<line x1="${X(i/100)}" y1="${Y(0)}" x2="${X(i/100)}" y2="${Y(0.32)-8}" stroke="var(--grid)"/>`;
+    for(let j=0;j<=4;j++) s+=`<line x1="${X(0)}" y1="${Y(j*.08)}" x2="${X(.1)}" y2="${Y(j*.08)}" stroke="${j%2?'var(--grid)':'var(--line-strong)'}"/>`;
+    s+=`<rect x="${X(0)}" y="${Y(.32)-8}" width="${X(.1)-X(0)}" height="${Y(0)-Y(.32)+8}" fill="none" stroke="var(--ink-3)"/>`;
+    s+=`<path d="${svgPath(t=>[X(t),Y(.32*Math.cos(80*t+Math.PI/6)**2)],0,.1,300)}" fill="none" stroke="var(--ink)" stroke-width="2.2"/>`;
+    s+=`<path d="${svgPath(t=>[X(t),Y(.32*Math.sin(80*t+Math.PI/6)**2)],0,.1,300)}" fill="none" stroke="var(--ink)" stroke-width="1.6" stroke-dasharray="5 4"/>`;
+    ['0','0,16','0,32'].forEach((l,j)=>s+=sTxt(6,Y(j*.16)+4,l)); ['0','0,02','0,04','0,06','0,08','0,1'].forEach((l,j)=>s+=sTxt(X(j*.02)-8,194,l));
+    s+=sTxt(118,208,'waktu (s)','style="font-size:11px;fill:var(--ink-3)"')+sTxt(6,10,'Energi (J)','style="font-size:11px;fill:var(--ink-3)"');
+    return sv(300,212,s,'Grafik energi kinetik (garis penuh) dan potensial (putus-putus) terhadap waktu, 0 sampai 0,1 detik, maksimum 0,32 joule'); },
+  pendulum(){ let s=`<rect x="70" y="10" width="120" height="10" fill="var(--surface-3)" stroke="var(--line-strong)"/>`; const px=130, py=20, L=140, th=.35;
+    s+=`<line x1="${px}" y1="${py}" x2="${px}" y2="${py+L}" stroke="var(--ink)" stroke-width="1.8"/><line x1="${px}" y1="${py}" x2="${px+L*Math.sin(th)}" y2="${py+L*Math.cos(th)}" stroke="var(--ink-3)" stroke-dasharray="4 4"/>`;
+    s+=`<path d="M${px} ${py+L} A ${L} ${L} 0 0 0 ${px+L*Math.sin(th)} ${py+L*Math.cos(th)}" fill="none" stroke="var(--ink-3)" stroke-dasharray="3 3"/>`;
+    s+=`<circle cx="${px+L*Math.sin(th)}" cy="${py+L*Math.cos(th)}" r="10" fill="none" stroke="var(--ink-3)"/><circle cx="${px}" cy="${py+L}" r="11" fill="var(--c-x)"/>`;
+    s+=`<path d="M${px} ${py+34} A 34 34 0 0 0 ${px+34*Math.sin(th)} ${py+34*Math.cos(th)}" fill="none" stroke="var(--accent)"/>`+`<text x="${px+4}" y="${py+52}" style="font:italic 600 14px var(--f-display);fill:var(--accent)">θ</text>`;
+    s+=sArrow(px+14,py+L,px+62,py+L,'var(--c-v)')+sTxt(px+30,py+L+24,'0,2 m/s')+sTxt(px-46,py+L/2,'1,6 m')+sTxt(px-50,py+L+5,'0,4 kg');
+    return sv(260,190,s,'Pendulum sederhana panjang 1,6 meter diberi laju awal horizontal 0,2 meter per detik'); },
+  gantung(){ let s=`<rect x="40" y="8" width="180" height="10" fill="var(--surface-3)" stroke="var(--line-strong)"/>`;
+    s+=vSpring(80,18,96,7)+`<line x1="64" y1="80" x2="96" y2="80" stroke="var(--ink-3)" stroke-dasharray="3 3"/>`+sTxt(14,84,'tanpa beban','style="font-size:10.5px;fill:var(--ink-3)"');
+    s+=vSpring(170,18,108,8)+`<rect x="150" y="108" width="40" height="30" rx="4" fill="var(--surface-2)" stroke="var(--ink-2)"/>`+sTxt(158,128,'300 g');
+    s+=`<line x1="196" y1="80" x2="226" y2="80" stroke="var(--ink-3)" stroke-dasharray="3 3"/><line x1="196" y1="108" x2="226" y2="108" stroke="var(--accent)" stroke-dasharray="3 3"/>`+sArrow(218,82,218,106,'var(--ink-3)',1.2)+sTxt(222,98,'d','style="font-size:12px;font-style:italic;fill:var(--ink-2)"');
+    s+=sArrow(170,142,170,172,'var(--c-a)')+sTxt(178,166,'ditarik 5 cm')+sTxt(198,112,'setimbang','style="font-size:10.5px;fill:var(--accent)"');
+    return sv(270,180,s,'Pegas digantung, beban 300 gram membuat pegas mulur 2,5 cm, lalu ditarik 5 cm'); },
+  laju(){ let s=`<rect x="10" y="40" width="10" height="70" fill="var(--surface-3)" stroke="var(--line-strong)"/><line x1="20" y1="110" x2="270" y2="110" stroke="var(--line-strong)"/>`;
+    s+=sSpring(20,120,90,8,7)+`<rect x="120" y="70" width="50" height="40" rx="4" fill="var(--surface-2)" stroke="var(--ink-2)"/>`+sTxt(124,94,'0,6 kg');
+    s+=sArrow(150,58,98,58,'var(--c-v)')+sTxt(104,48,'v = 20 m/s ke kiri')+sTxt(52,78,'k = 60 N/m')+`<line x1="145" y1="114" x2="145" y2="126" stroke="var(--accent)"/>`+sTxt(128,140,'x = 0','style="font-size:11px;fill:var(--accent)"');
+    return sv(280,150,s,'Balok 0,6 kilogram pada pegas 60 newton per meter, bergerak ke kiri dengan laju maksimum 20 meter per detik'); },
+  peluru(){ let s=`<rect x="262" y="40" width="10" height="72" fill="var(--surface-3)" stroke="var(--line-strong)"/><line x1="10" y1="112" x2="262" y2="112" stroke="var(--line-strong)"/>`;
+    s+=`<path d="M30 86h22l8 5-8 5H30z" fill="var(--ink-2)"/>`+sArrow(32,72,74,72,'var(--c-v)')+sTxt(34,62,'v = 720 m/s')+sTxt(32,110+0,'')+sTxt(36,128,'m');
+    s+=`<rect x="110" y="66" width="56" height="46" rx="4" fill="var(--surface-2)" stroke="var(--ink-2)"/>`+`<text x="138" y="94" text-anchor="middle" style="font:italic 600 15px var(--f-display);fill:var(--ink)">M</text>`;
+    s+=sSpring(166,262,89,9,7)+sTxt(200,70,'k')+sTxt(118,140,'permukaan licin','style="font-size:11px;fill:var(--ink-3)"');
+    return sv(280,150,s,'Peluru menumbuk balok M yang terhubung pegas ke dinding kanan di permukaan licin'); },
+  ab(){ let s=`<rect x="10" y="30" width="10" height="100" fill="var(--surface-3)" stroke="var(--line-strong)"/><rect x="270" y="30" width="10" height="100" fill="var(--surface-3)" stroke="var(--line-strong)"/><line x1="20" y1="130" x2="270" y2="130" stroke="var(--line-strong)"/>`;
+    s+=`<rect x="110" y="94" width="74" height="36" rx="3" fill="var(--surface-2)" stroke="var(--ink-2)"/><text x="147" y="117" text-anchor="middle" style="font:600 13px var(--f-body);fill:var(--ink)">B</text>`;
+    s+=`<rect x="122" y="62" width="50" height="32" rx="3" fill="var(--surface-2)" stroke="var(--ink-2)"/><text x="147" y="83" text-anchor="middle" style="font:600 13px var(--f-body);fill:var(--ink)">A</text>`;
+    s+=sSpring(20,110,112,8,6)+sSpring(172,270,78,8,6)+sTxt(54,98,'k₂ = 750')+sTxt(200,64,'k₁ = 250')+sTxt(226,146,'licin','style="font-size:11px;fill:var(--ink-3)"')+sTxt(124,56,'μₛ = 0,5','style="font-size:11px;fill:var(--ink-3)"');
+    return sv(290,152,s,'Balok A di atas balok B; pegas k1 menghubungkan A ke dinding kanan, pegas k2 menghubungkan B ke dinding kiri'); } };
+
+/* ==================== Bank soal ==================== */
+const Soal={ ctrls:{},
+  build(){ const list=$('#soalList'), idx=$('#soalIndex'); const answers=store.get('answers',{});
+    PROBLEMS.forEach((p,n)=>{ const kind=p.kind, key=KEY[kind], fig=kind&&FIG[kind]?FIG[kind]():'';
+      idx.append(h('a',{href:'#soal/'+p.id,'data-pid':p.id,html:`<small>${esc((p.source.match(/\d{4}\/\d{4}/)||[''])[0]+(p.source.match(/\((PR\d)\)/)?' '+p.source.match(/\((PR\d)\)/)[1]:''))||'Soal '+(n+1)}</small>${esc(p.title)}`}));
+      const art=h('article',{class:'card problem',id:'soal-'+p.id,'data-pid':p.id,'aria-labelledby':'soal-h-'+p.id});
+      art.append(h('div',{class:'problem-head'},h('div',null,h('p',{class:'eyebrow',style:'margin:0 0 4px',text:p.source||'Soal'}),h('h2',{id:'soal-h-'+p.id,text:p.title})),h('span',{class:'tag',text:'Soal '+(n+1)})));
+      const st=h('div',{class:'problem-statement'}); const stm=h('div',{class:'md'}); setMD(stm,p.statement); st.append(stm);
+      if(p.parts.length){ const ol=h('ol',{type:'a'}); p.parts.forEach(pt=>{ const li=setMD(h('li'),pt.text,true); ol.append(li); }); st.append(ol); }
+      const giv=Object.entries(p.given||{}); if(giv.length) st.append(h('div',{class:'given','aria-label':'Besaran yang diketahui'},giv.map(([k,v])=>h('span',{class:'tag',text:`${k}: ${v}`}))));
+      art.append(h('div',{class:'problem-body'+(fig?'':' no-fig')},st,fig?h('figure',{class:'problem-fig',style:'margin:0',html:fig+'<figcaption>Gambar digambar ulang dari soal asli</figcaption>'}):null));
+      const ta=h('textarea',{class:'input',id:'ans-'+p.id,rows:'5',placeholder:'Contoh: a) k = 2E/x_m² = … N/m'}); ta.value=answers[p.id]||'';
+      let saveT; ta.addEventListener('input',()=>{ clearTimeout(saveT); saveT=setTimeout(()=>{ const a=store.get('answers',{}); a[p.id]=ta.value; store.set('answers',a); if(ta.value.trim().length>15) Progress.mark('soal',p.id); },400); });
+      const fb=h('div',{class:'feedback','aria-live':'polite'});
+      const hs=h('div',{class:'hint-steps',role:'group','aria-label':'Petunjuk bertahap'}); const used=store.get('hints',{})[p.id]||0;
+      [1,2,3].forEach(l=>hs.append(h('button',{type:'button','data-l':l,disabled:l>used+1,class:l<=used?'used':'',html:icon('bulb')+'Petunjuk '+l,onclick:()=>this.hint(p,l,ta,fb,hs)})));
+      const acts=h('div',{class:'work-actions'},hs,
+        h('button',{class:'btn primary',type:'button',html:icon('check')+'Periksa jawaban',onclick:e=>this.check(p,ta,fb,e.currentTarget)}),
+        key&&key.sim?h('button',{class:'btn',type:'button',html:icon('flask')+'Buka di simulasi',onclick:()=>{ Sim.apply(key.sim); go('#simulasi/'+key.sim.type); Sim.play(); toast(key.sim.type==='pegas'&&key.sim.k/key.sim.m>400?'Geraknya cepat. Turunkan kecepatan waktu ke 0,05× untuk melihat jelas.':'Setelan soal dimuat ke simulasi.'); }}):null,
+        h('button',{class:'btn ghost',type:'button',html:icon('spark')+'Tanya tutor',onclick:()=>{ Ctx.problem=p.id; Chat.open({section:'soal:'+p.id,problemId:p.id,prefill:`Soal "${p.title}": `}); }}),
+        h('span',{class:'spacer'}),
+        h('button',{class:'btn ghost sm',type:'button',text:'Lihat solusi lengkap',onclick:()=>this.solution(p,fb)}));
+      art.append(h('div',{class:'work'},h('label',{class:'field',for:'ans-'+p.id},h('span',{text:'Jawabanmu (tulis langkah dan angka tiap bagian)'})),ta,acts,fb));
+      art.addEventListener('focusin',()=>{ if(Ctx.problem!==p.id){ Ctx.problem=p.id; updateState(); } });
+      list.append(art); }); },
+  fbBlock(fb,title,cls=''){ const b=h('div',{class:'fb '+cls}); const head=h('div',{class:'fb-head',html:title}); const body=h('div',{class:'md'}); b.append(head,body); fb.prepend(b); return {b,head,body}; },
+  async hint(p,level,ta,fb,hs){ const btn=$(`[data-l="${level}"]`,hs); if(btn.disabled&&!btn.classList.contains('used')) return; if(coolingDown()){ toast('Tunggu sebentar sebelum meminta petunjuk lagi.'); return; }
+    const all=$$('button',hs); all.forEach(b=>b.disabled=true); const {body}=this.fbBlock(fb,icon('bulb')+'Petunjuk '+level); body.innerHTML='<span class="spinner" aria-hidden="true"></span> <span class="muted">Menyiapkan petunjuk…</span>';
+    let text='';
+    try{ if(T.__stub) throw {code:'offline'}; const r=await T.hint({problemId:p.id,level,studentWork:ta.value,onText:onTextAdapter(t=>{ text=t; setMD(body,t); })}); text=(r&&r.text)||text; noteResultCode(r); }
+    catch(e){ const k=KEY[p.kind]; text=k?k.hints[level-1]:'Petunjuk belum tersedia untuk soal ini.'; }
+    setMD(body,text||'Petunjuk belum tersedia.');
+    const hints=store.get('hints',{}); hints[p.id]=Math.max(hints[p.id]||0,level); store.set('hints',hints); Progress.mark('soal',p.id);
+    all.forEach(b=>{ const l=+b.dataset.l; b.disabled=l>hints[p.id]+1; b.classList.toggle('used',l<=hints[p.id]); }); },
+  async check(p,ta,fb,btn){ const ans=ta.value.trim(); if(!ans){ toast('Tulis jawabanmu dulu di kotak jawaban.'); ta.focus(); return; } if(coolingDown()){ toast('Tunggu sebentar sebelum memeriksa lagi.'); return; }
+    btn.disabled=true; const old=btn.innerHTML; btn.innerHTML='<span class="spinner" aria-hidden="true"></span>Memeriksa…';
+    const blk=this.fbBlock(fb,icon('check')+'Pemeriksaan'); blk.body.innerHTML='<span class="muted">Tutor sedang membaca jawabanmu…</span>';
+    let res;
+    try{ if(T.__stub) throw {code:'offline'}; res=await T.checkAnswer({problemId:p.id,studentAnswer:ans,onText:onTextAdapter(t=>setMD(blk.body,t))}); noteResultCode(res); }
+    catch(e){ res=localCheck(p,ans); }
+    const v=['benar','sebagian','salah','tidak-jelas'].includes(res&&res.verdict)?res.verdict:'tidak-jelas';
+    blk.b.className='fb v-'+v; blk.head.innerHTML=icon('check')+'Pemeriksaan <span class="verdict-pill">'+{benar:'Benar',sebagian:'Sebagian benar',salah:'Belum benar','tidak-jelas':'Belum bisa dinilai'}[v]+'</span>';
+    setMD(blk.body,(res&&res.text)||''); Progress.mark('soal',p.id); btn.disabled=false; btn.innerHTML=old; },
+  async solution(p,fb){ const ok=await askDialog('Lihat solusi lengkap?','Solusi lengkap menampilkan semua langkah dan angka akhir. Coba pakai petunjuk dulu kalau belum selesai.','Tampilkan solusi'); if(!ok) return;
+    let mdText=null; try{ if(has('getSolution')){ const s=T.getSolution(p.id); if(s) mdText=s.markdown||((s.steps||'')+'\n\n**Jawaban:** '+(s.final||'')); } }catch(e){}
+    if(!mdText){ const k=KEY[p.kind]; mdText=k?k.key.map((x,i)=>`- **${String.fromCharCode(97+i)})** ${x}`).join('\n'):'Solusi untuk soal ini belum tersedia.'; }
+    const {body}=this.fbBlock(fb,icon('book')+'Solusi lengkap'); setMD(body,mdText); Progress.mark('soal',p.id); } };
+function localCheck(p,ans){ const k=KEY[p.kind]; if(!k) return {verdict:'tidak-jelas',text:'Kunci untuk soal ini belum tersedia.'};
+  const nums=(ans.replace(/(\d),(\d)/g,'$1.$2').match(/-?\d+(?:\.\d+)?(?:e-?\d+)?/g)||[]).map(Number);
+  const hit=k.nums.filter(alts=>nums.some(n=>alts.some(a=>Math.abs(Math.abs(n)-a)/a<=0.03))).length;
+  const v=!nums.length?'tidak-jelas':hit===k.nums.length?'benar':hit?'sebagian':'salah';
+  return {verdict:v,text:'_Pemeriksaan offline: hanya mencocokkan angka dengan kunci (toleransi 3%)._\n\n'+({benar:'Semua angka kunci muncul di jawabanmu.',sebagian:`${hit} dari ${k.nums.length} angka kunci sudah cocok. Periksa bagian lainnya.`,salah:'Angka di jawabanmu belum cocok dengan kunci. Coba buka petunjuk.','tidak-jelas':'Tulis hasil tiap bagian beserta angkanya, misalnya "a) k = … N/m".'}[v])+(v!=='benar'?'\n\nPetunjuk: '+k.hints[1]:'')}; }
+
+/* ==================== Chat tutor ==================== */
+const Chat={ history:[], busy:false, ctrl:null, mode:null, where:null, drawerOpen:false, pendingCtx:null,
+  init(){ const saved=store.get('mode'); this.mode=MODES.some(m=>m.id===saved)?saved:(MODES[0]&&MODES[0].id)||'jelaskan';
+    const sel=$('#modeSel'); MODES.forEach(m=>sel.append(h('option',{value:m.id,text:m.label}))); sel.value=this.mode; sel.addEventListener('change',()=>this.setMode(sel.value));
+    MODES.forEach(m=>$('#modeList').append(h('button',{class:'mode-item',type:'button','data-m':m.id,'aria-pressed':m.id===this.mode,html:`<b>${esc(m.label)}</b><span>${esc(m.desc||'')}</span>`,onclick:()=>this.setMode(m.id)})));
+    const inp=$('#chatInput'); inp.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){ e.preventDefault(); $('#chatForm').requestSubmit(); } });
+    inp.addEventListener('input',()=>{ inp.style.height='auto'; inp.style.height=Math.min(160,inp.scrollHeight+2)+'px'; });
+    $('#chatForm').addEventListener('submit',e=>{ e.preventDefault(); const t=inp.value.trim(); if(!t) return; inp.value=''; inp.style.height='auto'; this.send(t); });
+    $('#chatStop').addEventListener('click',()=>{ if(this.ctrl) this.ctrl.abort(); });
+    $('#chatClear').addEventListener('click',()=>{ if(this.ctrl) this.ctrl.abort(); this.history=[]; $('#chatLog').innerHTML=''; $('#chat').classList.remove('has-msgs'); this.empty(); toast('Obrolan baru dimulai.'); });
+    $('#tutorFab').addEventListener('click',()=>this.drawerOpen?this.close():this.open({}));
+    $('#chatClose').addEventListener('click',()=>this.close());
+    $('#drawer').addEventListener('keydown',e=>{ if(e.key==='Escape'){ this.close(); } });
+    document.addEventListener('ai:state',()=>{ this.syncBusy(); this.syncNote(); });
+    this.empty(); },
+  setMode(id){ this.mode=id; store.set('mode',id); $('#modeSel').value=id; $$('#modeList .mode-item').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===id)); },
+  empty(){ const log=$('#chatLog'); if(log.children.length) return; const off=T.__stub;
+    log.append(h('div',{class:'chat-empty'},h('h3',{text:'Tanya soal osilasi'}),h('p',{style:'margin:0 0 6px',text:'Tutor tahu bagian yang sedang kamu buka. Pilih gaya jawaban di atas, lalu tulis pertanyaan atau pilih saran di bawah.'}),
+      h('p',{class:'msg sys warn',id:'aiNote',style:'margin-top:10px',hidden:true}))); this.syncNote(); },
+  syncNote(){ const n=$('#aiNote'); if(!n) return; const st=AI.state; const show=T.__stub||['offline','blocked','expired','rate'].includes(st); n.hidden=!show;
+    n.textContent=T.__stub?'Tutor AI tidak termuat di halaman ini. Jawaban diambil dari daftar rumus modul.':st==='blocked'?'Tutor AI butuh izin "Tanya Claude". Izin diminta saat kamu mengirim pertanyaan; selama belum diizinkan, tutor menjawab dari materi modul.':st==='rate'?'Tutor sedang menerima terlalu banyak permintaan. Tunggu sebentar sebelum bertanya lagi.':st==='expired'?'Sesi Claude berakhir. Masuk lagi agar mode AI aktif; sementara ini tutor menjawab dari materi modul.':'Mode AI butuh izin "Tanya Claude" dan hanya berjalan di dalam aplikasi Claude. Tanpa itu, tutor tetap menjawab dari materi modul dan rumus.'; },
+  mount(where){ if(this.where===where) return; this.where=where; const chat=$('#chat');
+    if(where==='page'){ $('#tutorHost').append(chat); this.close(true); $('#tutorFab').hidden=true; $('#chatClose').hidden=true; $('#chatExpand').hidden=true; }
+    else { $('#drawerHost').append(chat); $('#tutorFab').hidden=false; $('#chatClose').hidden=false; $('#chatExpand').hidden=false; } },
+  open(o={}){ if(o.section) this.pendingCtx={section:o.section,problemId:o.problemId};
+    if(Ctx.view!=='tutor'){ this.drawerOpen=true; const d=$('#drawer'); d.classList.add('open'); document.body.classList.add('drawer-open'); $('#tutorFab').setAttribute('aria-expanded','true'); }
+    if(o.prefill){ const i=$('#chatInput'); i.value=o.prefill; }
+    setTimeout(()=>{ const i=$('#chatInput'); i.focus(); if(o.prefill) i.setSelectionRange(i.value.length,i.value.length); },60);
+    this.renderSuggestions(); if(o.send) this.send(o.send); },
+  close(silent){ if(!this.drawerOpen&&silent) return; this.drawerOpen=false; $('#drawer').classList.remove('open'); document.body.classList.remove('drawer-open'); $('#tutorFab').setAttribute('aria-expanded','false'); if(!silent) $('#tutorFab').focus(); },
+  renderSuggestions(){ const host=$('#chatSugg'); if(!host) return; let list=[]; try{ list=has('suggestions')?T.suggestions(sectionString())||[]:[]; }catch(e){}
+    if(!list.length) list=FB.suggest[sectionString().split(':')[0]]||FB.suggest.tutor; host.innerHTML=''; list.slice(0,3).forEach(s=>host.append(h('button',{class:'chip',type:'button',text:s,onclick:()=>this.send(s)}))); },
+  syncBusy(){ const cool=coolingDown(); $('#chatSend').hidden=this.busy; $('#chatStop').hidden=!this.busy; $('#chatSend').disabled=cool; $('#chatSend').title=cool?'Tunggu sebentar, permintaan terlalu banyak':''; },
+  scroll(force){ const log=$('#chatLog'); if(force||log.scrollHeight-log.scrollTop-log.clientHeight<120) log.scrollTop=log.scrollHeight; },
+  addMsg(role,content){ const log=$('#chatLog'); const e=$('.chat-empty',log); if(e) e.remove();
+    $('#chat').classList.add('has-msgs');
+    if(role==='user'){ const m=h('div',{class:'msg user',text:content}); log.append(m); this.scroll(true); return m; }
+    if(role==='sys'){ const m=h('div',{class:'msg sys warn',html:content}); log.append(m); this.scroll(true); return m; }
+    const m=h('div',{class:'msg bot'}); m.append(h('div',{class:'who',html:icon('spark')+'Tutor'})); const body=h('div',{class:'md'}); m.append(body); log.append(m); this.scroll(true); return {m,body}; },
+  async send(text){ if(this.busy) return; if(coolingDown()){ toast('Tunggu '+Math.ceil((AI.cooldownUntil-Date.now())/1000)+' detik sebelum bertanya lagi.'); return; }
+    const ctx=Object.assign({section:sectionString(),sim:Sim.current(),problemId:Ctx.view==='soal'||sectionString().startsWith('soal')?Ctx.problem||undefined:undefined},this.pendingCtx||{}); this.pendingCtx=null;
+    this.addMsg('user',text); const prior=this.history.slice(-16); this.history.push({role:'user',content:text});
+    const {m,body}=this.addMsg('bot'); body.classList.add('cursor'); body.innerHTML='<span class="muted">Sedang berpikir…</span>';
+    this.busy=true; this.syncBusy(); this.ctrl=new AbortController(); let shown=''; let rafId=0;
+    const paint=t=>{ shown=t; if(rafId) return; rafId=requestAnimationFrame(()=>{ rafId=0; setMD(body,shown); this.scroll(); }); };
+    let res=null;
+    try{ if(T.__stub) throw {code:'offline'};
+      res=await T.ask({message:text,history:prior,mode:this.mode,context:ctx,onText:onTextAdapter(paint),signal:this.ctrl.signal}); }
+    catch(e){ const info=errInfo(e); if(info.kind==='abort') res={text:shown,cancelled:true}; else { res={text:'_'+info.msg+'_\n\n'+offlineAnswer(text),offline:true}; if(info.kind==='blocked') setAIState('blocked'); } }
+    if(rafId) cancelAnimationFrame(rafId);
+    body.classList.remove('cursor'); let out=(res&&res.text)||shown||'';
+    if(res&&res.cancelled) out=(out?out+'\n\n':'')+'_(Jawaban dihentikan.)_';
+    setMD(body,out||'_Tutor tidak memberi jawaban. Coba tulis ulang pertanyaannya._'); noteResultCode(res);
+    if(res&&Array.isArray(res.actions)) res.actions.forEach(a=>m.append(h('span',{class:'act',html:icon('check')+esc(describeAction(a))})));
+    if(res&&!res.cancelled&&out) this.history.push({role:'assistant',content:out.slice(0,6000)}); else if(res&&res.cancelled) this.history.pop();
+    this.busy=false; this.ctrl=null; this.syncBusy(); this.scroll(); if(Ctx.view==='tutor'||this.drawerOpen) $('#chatInput').focus({preventScroll:true}); } };
+function describeAction(a){ if(!a) return ''; if(a.type==='set-sim') return 'Simulasi '+(a.sim&&a.sim.type||'')+' diatur'; if(a.type==='goto') return 'Membuka bagian '+(a.target||a.section||''); if(a.type==='highlight-formula') return 'Rumus disorot'; return a.type; }
+/* Jawaban offline (hanya bila tutor.js tidak termuat): cari di daftar rumus */
+function offlineAnswer(q){ const words=q.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,' ').split(/\s+/).filter(w=>w.length>2);
+  const syn={periode:['T-'],energi:['energi','U','K','E'],pendulum:['pendulum','bandul'],bandul:['pendulum'],redam:['teredam'],teredam:['teredam'],kecepatan:['kecepatan','v'],percepatan:['percepatan'],pegas:['pegas','hooke']};
+  const scored=FORMULAS.map(f=>{ const hay=`${f.name} ${f.note||''} ${f.topic} ${f.id}`.toLowerCase(); let s=0; words.forEach(w=>{ if(hay.includes(w)) s+=2; (syn[w]||[]).forEach(x=>{ if(hay.includes(x.toLowerCase())) s+=1; }); }); return [s,f]; }).filter(x=>x[0]>0).sort((a,b)=>b[0]-a[0]).slice(0,4);
+  if(!scored.length) return 'Aku belum menemukan rumus yang cocok. Coba sebut besarannya, misalnya "periode pegas" atau "energi kinetik". Daftar lengkap ada di bagian [Rumus](#rumus).';
+  return 'Rumus yang mungkin kamu cari:\n\n'+scored.map(([,f])=>`- **${f.name}**: $${f.latex}$${f.note?' ('+f.note+')':''}`).join('\n'); }
+
+/* ==================== Aksi dari tutor ==================== */
+window.addEventListener('tutor:action',e=>{ const d=e.detail||{}; const fromTutor=Ctx.view==='tutor';
+  try{
+    if(d.type==='set-sim'&&d.sim){ if(Sim.apply(d.sim)){ const t=Sim.active; if(Ctx.view!=='simulasi') go('#simulasi/'+t); Sim.play(); toast('Tutor mengatur simulasi '+t+'.'); } }
+    else if(d.type==='goto'){ let tgt=String(d.target||d.section||''); let [sec,sub]=tgt.split(/[:/]/); if(!VIEWS.includes(sec)){ [sec,sub]=String(d.section||'').split(/[:/]/); }
+      if(d.problemId){ sec='soal'; sub=d.problemId; } if(sec==='materi'&&sub==='osilasi') sub='ghs'; if(VIEWS.includes(sec)) go('#'+sec+(sub?'/'+sub:'')); }
+    else if(d.type==='highlight-formula'&&d.id) Formulas.highlight(d.id);
+  }catch(err){}
+  if(fromTutor&&Ctx.view!=='tutor') Chat.open({}); });
+
+/* ==================== Mulai ==================== */
+renderStaticMath(); drawFigures(); calc();
+Formulas.build(); Quiz.init(); Soal.build(); Chat.init();
+$('#statSoal').textContent=PROBLEMS.length; $('#statRumus').textContent=FORMULAS.length;
+applyThemeUI(); Progress.render(); route(false); loadKatex(); checkReady();
+window.__osilasiUI={Sim,Chat,Formulas,Quiz,Soal,go};
+})();
+</script>
+</body>
+</html>
